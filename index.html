@@ -16,8 +16,8 @@
 :root{
 --bg:#0a0d13;--bg2:#0f131b;--panel:#141924;--panel2:#1b2130;--elev:#232b3b;
 --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);
---text:#e7eaf0;--text2:#98a1b3;--text3:#616b7f;
---accent:#6cbf3a;--accent-soft:rgba(108,191,58,.16);
+--text:#e7eaf0;--text2:#9aa3b5;--text3:#8b94a6;
+--accent:#6cbf3a;--accent-soft:rgba(108,191,58,.16);--on-accent:#08260a;
 --ok:#35d0a5;--ok-soft:rgba(53,208,165,.15);
 --warn:#f5b544;--warn-soft:rgba(245,181,68,.15);
 --danger:#f76a6a;--danger-soft:rgba(247,106,106,.15);
@@ -27,7 +27,7 @@
 [data-theme="light"]{
 --bg:#eceff4;--bg2:#f4f6fa;--panel:#ffffff;--panel2:#f2f5f9;--elev:#ffffff;
 --border:rgba(13,22,41,.09);--border2:rgba(13,22,41,.18);
---text:#111a2c;--text2:#54607a;--text3:#8390a6;
+--text:#111a2c;--text2:#505c76;--text3:#667085;
 --accent:#4f9e26;--accent-soft:rgba(79,158,38,.12);
 --ok:#0f9e70;--ok-soft:rgba(15,158,112,.12);
 --warn:#c07d12;--warn-soft:rgba(192,125,18,.14);
@@ -73,7 +73,7 @@ a:hover{text-decoration:underline}
         <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Contraseña</div>
         <input value="{{ loginPass }}" onInput="{{ onLoginPass }}" type="password" placeholder="••••••••" style="box-sizing:border-box;width:100%;padding:12px 14px;border-radius:11px;background:var(--panel2);border:1px solid var(--border);color:var(--text);font:600 13px 'IBM Plex Sans';outline:none" style-focus="border-color:var(--accent)" />
         <sc-if value="{{ loginHasErr }}" hint-placeholder-val=""><div style="margin-top:12px;display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--danger)"><span data-ms="" style="font-size:16px">error</span>{{ loginErr }}</div></sc-if>
-        <button onClick="{{ onWebLogin }}" style="margin-top:20px;width:100%;padding:13px;border-radius:12px;background:var(--accent);border:none;color:#fff;font:700 13.5px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:19px">login</span>Iniciar sesión</button>
+        <button onClick="{{ onWebLogin }}" style="margin-top:20px;width:100%;padding:13px;border-radius:12px;background:var(--accent);border:none;color:#08260a;font:700 13.5px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:19px">login</span>Iniciar sesión</button>
         <div style="margin-top:16px;text-align:center;font-size:10.5px;color:var(--text3);line-height:1.5">Demo · ingresa cualquier usuario y contraseña<br>Sesión protegida · Control Inteligente</div>
       </div>
     </div>
@@ -381,7 +381,7 @@ a:hover{text-decoration:underline}
         <div style="display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:14px;padding:13px 18px;margin-bottom:16px">
           <span data-ms="" style="font-size:22px;color:var(--accent)">shield_person</span>
           <div style="flex:1"><div style="font-size:13.5px;font-weight:700">Panel exclusivo del Super Admin</div><div style="font-size:11.5px;color:var(--text2)">Solo el dueño del software crea empresas e instalaciones. La creación de instalaciones tiene costo adicional para cada empresa.</div></div>
-          <button onClick="{{ onAddEmp }}" style="display:flex;align-items:center;gap:7px;padding:9px 15px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">add_business</span>Crear empresa</button>
+          <button onClick="{{ onAddEmp }}" style="display:flex;align-items:center;gap:7px;padding:9px 15px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">add_business</span>Crear empresa</button>
         </div>
         <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Administración de membresías</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px">
@@ -471,7 +471,7 @@ a:hover{text-decoration:underline}
             <sc-if value="{{ mapCanEditPts }}" hint-placeholder-val="{{ true }}">
               <button onClick="{{ onEditMapPts }}" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:var(--panel2);border:1px solid var(--border2);color:var(--text);font:600 12px 'IBM Plex Sans';cursor:pointer" style-hover="border-color:var(--accent);color:var(--accent)"><span data-ms="" style="font-size:16px">edit_location_alt</span>Editar puntos NFC</button>
             </sc-if>
-            <button onClick="{{ onNROpen }}" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:var(--accent);border:none;color:#fff;font:600 12px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:16px">add_location_alt</span>Crear mapa NFC</button>
+            <button onClick="{{ onNROpen }}" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:var(--accent);border:none;color:#08260a;font:600 12px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:16px">add_location_alt</span>Crear mapa NFC</button>
           </sc-if>
           <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ok);padding:6px 11px;border-radius:8px;background:var(--ok-soft)"><span style="width:7px;height:7px;border-radius:50%;background:var(--ok);animation:blink 1.6s infinite"></span>Sincronizado en tiempo real</div>
         </div>
@@ -539,7 +539,7 @@ a:hover{text-decoration:underline}
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <div style="font-size:13px;color:var(--text2)">{{ rutasCount }}</div>
           <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ true }}">
-            <button onClick="{{ onNROpen }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">add</span>Nueva ronda</button>
+            <button onClick="{{ onNROpen }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">add</span>Nueva ronda</button>
           </sc-if>
         </div>
         <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:14px">
@@ -597,7 +597,7 @@ a:hover{text-decoration:underline}
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <div style="font-size:13px;color:var(--text2)">{{ tagsCount }}</div>
           <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ true }}">
-            <button onClick="{{ onETOpen }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">add</span>Registrar etiqueta</button>
+            <button onClick="{{ onETOpen }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">add</span>Registrar etiqueta</button>
           </sc-if>
         </div>
         <div style="display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start">
@@ -664,7 +664,7 @@ a:hover{text-decoration:underline}
               </sc-for>
             </div>
             <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ true }}">
-              <button onClick="{{ onVisitaCam }}" style="margin-top:15px;width:100%;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px"><span data-ms="" style="font-size:18px">how_to_reg</span>Registrar visita</button>
+              <button onClick="{{ onVisitaCam }}" style="margin-top:15px;width:100%;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px"><span data-ms="" style="font-size:18px">how_to_reg</span>Registrar visita</button>
             </sc-if>
           </div>
           <div style="background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden">
@@ -750,10 +750,10 @@ a:hover{text-decoration:underline}
             </div>
             <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ true }}">
               <sc-if value="{{ vehModeIngreso }}" hint-placeholder-val="{{ true }}">
-                <button onClick="{{ onVehiculoCam }}" style="margin-top:15px;width:100%;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px"><span data-ms="" style="font-size:18px">login</span>Registrar ingreso</button>
+                <button onClick="{{ onVehiculoCam }}" style="margin-top:15px;width:100%;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px"><span data-ms="" style="font-size:18px">login</span>Registrar ingreso</button>
               </sc-if>
               <sc-if value="{{ vehModeSalida }}" hint-placeholder-val="">
-                <button onClick="{{ onRegisterExit }}" style="margin-top:15px;width:100%;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px"><span data-ms="" style="font-size:18px">logout</span>Leer patente y registrar salida</button>
+                <button onClick="{{ onRegisterExit }}" style="margin-top:15px;width:100%;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px"><span data-ms="" style="font-size:18px">logout</span>Leer patente y registrar salida</button>
               </sc-if>
               <sc-if value="{{ vehExitMsg }}" hint-placeholder-val="">
                 <div style="margin-top:11px;display:flex;align-items:center;gap:8px;background:var(--ok-soft);border:1px solid var(--ok);border-radius:10px;padding:9px 11px;font-size:11.5px;color:var(--text)"><span data-ms="" style="font-size:17px;color:var(--ok)">check_circle</span>{{ vehExitMsg }}</div>
@@ -833,7 +833,7 @@ a:hover{text-decoration:underline}
             </sc-for>
           </div>
           <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ true }}">
-            <button onClick="{{ onAddGuard }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">person_add</span>Agregar guardia</button>
+            <button onClick="{{ onAddGuard }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">person_add</span>Agregar guardia</button>
           </sc-if>
         </div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:13px">
@@ -860,7 +860,7 @@ a:hover{text-decoration:underline}
       <!-- ============ INCIDENTES ============ -->
       <sc-if value="{{ isIncidentes }}" hint-placeholder-val="">
         <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ true }}">
-          <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onClick="{{ onReportInc }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:18px">edit_note</span>Reportar incidente</button></div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onClick="{{ onReportInc }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:18px">edit_note</span>Reportar incidente</button></div>
         </sc-if>
         <sc-if value="{{ incHasCrit }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex;align-items:center;gap:12px;background:var(--danger-soft);border:1px solid var(--danger);border-radius:13px;padding:13px 16px;margin-bottom:16px">
@@ -950,7 +950,7 @@ a:hover{text-decoration:underline}
             <span style="font-size:14px;font-weight:600">Reportes programados y generados</span>
             <div style="display:flex;gap:7px">
               <button onClick="{{ onExportExcel }}" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:500 12px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)"><span data-ms="" style="font-size:16px">table_view</span>Excel</button>
-              <button onClick="{{ onExportPDF }}" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;background:var(--accent);border:none;color:#fff;font:600 12px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:16px">picture_as_pdf</span>Generar PDF</button>
+              <button onClick="{{ onExportPDF }}" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;background:var(--accent);border:none;color:#08260a;font:600 12px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:16px">picture_as_pdf</span>Generar PDF</button>
             </div>
           </div>
           <sc-for list="{{ reportsList }}" as="r" hint-placeholder-count="4">
@@ -978,7 +978,7 @@ a:hover{text-decoration:underline}
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <div style="font-size:13px;color:var(--text2)">Asigna listas de verificación a un guardia o a un turno completo</div>
           <sc-if value="{{ canEditCk }}" hint-placeholder-val="{{ true }}">
-            <button onClick="{{ onCkNew }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms style="font-size:18px">add</span>Nueva asignación</button>
+            <button onClick="{{ onCkNew }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms style="font-size:18px">add</span>Nueva asignación</button>
           </sc-if>
         </div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
@@ -1070,7 +1070,7 @@ a:hover{text-decoration:underline}
             <div style="display:flex;gap:7px;flex-wrap:wrap">
               <sc-for list="{{ privFilters }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="{{ f.style }}">{{ f.l }}</button></sc-for>
             </div>
-            <sc-if value="{{ prCanAct }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onPrivNew }}" style="display:flex;align-items:center;gap:6px;padding:8px 13px;border-radius:9px;background:var(--accent);border:none;color:#fff;font:600 12px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:17px">add</span>Nueva solicitud</button></sc-if>
+            <sc-if value="{{ prCanAct }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onPrivNew }}" style="display:flex;align-items:center;gap:6px;padding:8px 13px;border-radius:9px;background:var(--accent);border:none;color:#08260a;font:600 12px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:17px">add</span>Nueva solicitud</button></sc-if>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1.2fr .8fr .75fr .95fr .8fr .9fr;padding:10px 18px;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)"><span>Derecho</span><span>Titular</span><span>Canal</span><span>Recibida</span><span>SLA</span><span>Estado</span><span>Acción</span></div>
           <sc-for list="{{ privReqs }}" as="r" hint-placeholder-count="4">
@@ -1082,7 +1082,7 @@ a:hover{text-decoration:underline}
               <span style="font-size:11.5px;color:{{ r.slaCol }}">{{ r.slaTxt }}</span>
               <span><span style="font:600 10px/1 'IBM Plex Mono';padding:4px 9px;border-radius:20px;color:{{ r.estadoCol }};background:{{ r.estadoSoft }}">{{ r.estado }}</span></span>
               <span>
-                <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ true }}"><button onClick="{{ r.onView }}" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--accent);border:none;color:#fff;font:600 11px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:15px">gavel</span>Resolver</button></sc-if>
+                <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ true }}"><button onClick="{{ r.onView }}" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--accent);border:none;color:#08260a;font:600 11px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:15px">gavel</span>Resolver</button></sc-if>
                 <sc-if value="{{ r.pending }}" hint-placeholder-val=""><span onClick="{{ r.onView }}" style="display:flex;align-items:center;gap:4px;font:600 11px 'IBM Plex Mono';color:var(--text3);cursor:pointer"><span data-ms="" style="font-size:15px;color:{{ r.estadoCol }}">visibility</span>Ver</span></sc-if>
               </span>
             </div>
@@ -1170,7 +1170,7 @@ a:hover{text-decoration:underline}
             <div style="display:flex;align-items:center;gap:12px">
               <sc-if value="{{ cfgSaved }}" hint-placeholder-val=""><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ok);font-weight:600"><span data-ms style="font-size:17px">check_circle</span>Cambios guardados</div></sc-if>
               <div style="flex:1"></div>
-              <button onClick="{{ onCfgSave }}" style="display:flex;align-items:center;gap:7px;padding:11px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms style="font-size:18px">save</span>Guardar cambios</button>
+              <button onClick="{{ onCfgSave }}" style="display:flex;align-items:center;gap:7px;padding:11px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms style="font-size:18px">save</span>Guardar cambios</button>
             </div>
           </div>
         </div>
@@ -1216,7 +1216,7 @@ a:hover{text-decoration:underline}
             <button onClick="{{ onBitExportPDF }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--panel2);border:1px solid var(--border2);color:var(--text);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="border-color:var(--danger);color:var(--danger)"><span data-ms="" style="font-size:18px">picture_as_pdf</span>PDF del día</button>
             <button onClick="{{ onBitExport }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--panel2);border:1px solid var(--border2);color:var(--text);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="border-color:var(--accent);color:var(--accent)"><span data-ms="" style="font-size:18px">download</span>CSV</button>
             <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ true }}">
-              <button onClick="{{ onBitOpen }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">add</span>Nueva entrada</button>
+              <button onClick="{{ onBitOpen }}" style="display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">add</span>Nueva entrada</button>
             </sc-if>
           </div>
         </div>
@@ -1525,7 +1525,7 @@ a:hover{text-decoration:underline}
         <div style="padding:18px">
           <sc-if value="{{ camLive }}" hint-placeholder-val="{{ true }}">
             <div style="position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:4/3"><video ref="{{ setVideo }}" style="width:100%;height:100%;object-fit:cover"></video><div style="position:absolute;inset:14px;border:2px solid rgba(255,255,255,.55);border-radius:12px;pointer-events:none"></div></div>
-            <button onClick="{{ onCapture }}" style="margin-top:14px;width:100%;padding:12px;border-radius:11px;background:var(--accent);border:none;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><span data-ms="" style="font-size:19px">camera</span>Capturar</button>
+            <button onClick="{{ onCapture }}" style="margin-top:14px;width:100%;padding:12px;border-radius:11px;background:var(--accent);border:none;color:#08260a;font:600 13px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><span data-ms="" style="font-size:19px">camera</span>Capturar</button>
             <label style="display:block;text-align:center;margin-top:10px;font-size:11.5px;color:var(--text3);cursor:pointer">o subir una imagen<input type="file" accept="image/*" onChange="{{ onFile }}" style="display:none"></label>
           </sc-if>
           <sc-if value="{{ camHasShot }}" hint-placeholder-val="">
@@ -1534,7 +1534,7 @@ a:hover{text-decoration:underline}
             <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:9px">
               <sc-for list="{{ camFields }}" as="f" hint-placeholder-count="4"><div style="background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:9px 11px"><div style="font-size:10px;color:var(--text3)">{{ f.k }}</div><div style="font-size:12.5px;font-weight:600;font-family:'IBM Plex Mono'">{{ f.v }}</div></div></sc-for>
             </div>
-            <div style="display:flex;gap:9px;margin-top:14px"><button onClick="{{ onRetake }}" style="flex:1;padding:11px;border-radius:11px;background:var(--panel2);border:1px solid var(--border);color:var(--text);font:600 12.5px 'IBM Plex Sans';cursor:pointer">Reintentar</button><button onClick="{{ onCamClose }}" style="flex:1;padding:11px;border-radius:11px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer">Guardar registro</button></div>
+            <div style="display:flex;gap:9px;margin-top:14px"><button onClick="{{ onRetake }}" style="flex:1;padding:11px;border-radius:11px;background:var(--panel2);border:1px solid var(--border);color:var(--text);font:600 12.5px 'IBM Plex Sans';cursor:pointer">Reintentar</button><button onClick="{{ onCamClose }}" style="flex:1;padding:11px;border-radius:11px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer">Guardar registro</button></div>
           </sc-if>
           <sc-if value="{{ camErrB }}" hint-placeholder-val="">
             <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px;text-align:center;color:var(--text2)"><span data-ms="" style="font-size:38px;color:var(--warn)">no_photography</span><div style="font-size:13px;line-height:1.5">No se pudo acceder a la cámara. Sube una imagen para continuar con el OCR.</div><label style="padding:10px 16px;border-radius:11px;background:var(--accent);color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer">Subir imagen<input type="file" accept="image/*" onChange="{{ onFile }}" style="display:none"></label></div>
@@ -1592,7 +1592,7 @@ a:hover{text-decoration:underline}
             </div>
             <div style="display:flex;gap:8px;margin-top:2px">
               <button onClick="{{ guardApp.onCancelEdit }}" style="flex:1;padding:9px;border-radius:9px;background:var(--panel);border:1px solid var(--border);color:var(--text2);font:600 11.5px 'IBM Plex Sans';cursor:pointer">Cancelar</button>
-              <button onClick="{{ guardApp.onSaveCred }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border-radius:9px;background:var(--accent);border:none;color:#fff;font:600 11.5px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:15px">sync</span>Guardar y sincronizar</button>
+              <button onClick="{{ guardApp.onSaveCred }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border-radius:9px;background:var(--accent);border:none;color:#08260a;font:600 11.5px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:15px">sync</span>Guardar y sincronizar</button>
             </div>
           </sc-if>
           <sc-if value="{{ guardApp.notEditing }}" hint-placeholder-val="{{ true }}">
@@ -1618,7 +1618,7 @@ a:hover{text-decoration:underline}
         </sc-if>
       </div>
       <div style="padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:9px">
-        <button onClick="{{ onGuardMap }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:11px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:17px">my_location</span>Ver en mapa</button>
+        <button onClick="{{ onGuardMap }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:11px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:17px">my_location</span>Ver en mapa</button>
         <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ true }}">
           <button onClick="{{ onGuardTask }}" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 14px;border-radius:11px;background:var(--panel2);border:1px solid var(--border);color:var(--text);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="border-color:var(--accent);color:var(--accent)"><span data-ms="" style="font-size:17px">add_task</span>Tarea</button>
         </sc-if>
@@ -1753,7 +1753,7 @@ a:hover{text-decoration:underline}
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
         <button onClick="{{ onIncCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onIncSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Reportar</button>
+        <button onClick="{{ onIncSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Reportar</button>
       </div>
     </div>
   </sc-if>
@@ -1828,7 +1828,7 @@ a:hover{text-decoration:underline}
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
         <button onClick="{{ onBitCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onBitSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Guardar entrada</button>
+        <button onClick="{{ onBitSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Guardar entrada</button>
       </div>
     </div>
   </sc-if>
@@ -1883,7 +1883,7 @@ a:hover{text-decoration:underline}
         </sc-if>
         <div style="flex:1"></div>
         <button onClick="{{ onETCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onETSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Grabar etiqueta</button>
+        <button onClick="{{ onETSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Grabar etiqueta</button>
       </div>
     </div>
   </sc-if>
@@ -1911,7 +1911,7 @@ a:hover{text-decoration:underline}
         </div>
         <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
           <button onClick="{{ onPrivCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-          <button onClick="{{ onPrivSaveNew }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Registrar solicitud</button>
+          <button onClick="{{ onPrivSaveNew }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Registrar solicitud</button>
         </div>
       </sc-if>
       <sc-if value="{{ prIsView }}" hint-placeholder-val="">
@@ -1960,7 +1960,7 @@ a:hover{text-decoration:underline}
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
         <button onClick="{{ onPwClose }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onPwSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Actualizar</button>
+        <button onClick="{{ onPwSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Actualizar</button>
       </div>
     </div>
   </sc-if>
@@ -1978,7 +1978,7 @@ a:hover{text-decoration:underline}
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
         <button onClick="{{ onGTClose }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onGTSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">send</span>Asignar</button>
+        <button onClick="{{ onGTSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">send</span>Asignar</button>
       </div>
     </div>
   </sc-if>
@@ -2009,7 +2009,7 @@ a:hover{text-decoration:underline}
         <sc-if value="{{ ckIsEdit }}" hint-placeholder-val=""><button onClick="{{ onCkDelete }}" style="display:flex;align-items:center;gap:6px;padding:10px 15px;border-radius:10px;background:var(--danger-soft);border:1px solid var(--danger);color:var(--danger);font:600 12px 'IBM Plex Sans';cursor:pointer"><span data-ms style="font-size:17px">delete</span>Eliminar</button></sc-if>
         <div style="flex:1"></div>
         <button onClick="{{ onCkCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onCkSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms style="font-size:18px">check</span>Guardar</button>
+        <button onClick="{{ onCkSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms style="font-size:18px">check</span>Guardar</button>
       </div>
     </div>
   </sc-if>
@@ -2038,7 +2038,7 @@ a:hover{text-decoration:underline}
                 </div>
               </sc-for>
             </div>
-            <button onClick="{{ onProfEdit }}" style="margin-top:14px;display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">edit</span>Editar información</button>
+            <button onClick="{{ onProfEdit }}" style="margin-top:14px;display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">edit</span>Editar información</button>
           </sc-if>
           <sc-if value="{{ profEdit }}" hint-placeholder-val="">
             <div style="display:flex;flex-direction:column;gap:13px">
@@ -2047,7 +2047,7 @@ a:hover{text-decoration:underline}
               <div><div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Teléfono</div><input value="{{ profTel }}" onInput="{{ onProfTel }}" style="width:100%;box-sizing:border-box;padding:11px 13px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text);font:500 13px 'IBM Plex Mono';outline:none" style-focus="border-color:var(--accent)"></div>
               <div style="display:flex;gap:10px;margin-top:2px">
                 <button onClick="{{ onProfCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-                <button onClick="{{ onProfSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Guardar cambios</button>
+                <button onClick="{{ onProfSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Guardar cambios</button>
               </div>
             </div>
           </sc-if>
@@ -2202,7 +2202,7 @@ a:hover{text-decoration:underline}
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
         <button onClick="{{ onPlansCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onPlansSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Guardar precios</button>
+        <button onClick="{{ onPlansSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Guardar precios</button>
       </div>
     </div>
   </sc-if>
@@ -2246,7 +2246,7 @@ a:hover{text-decoration:underline}
           <button onClick="{{ empDetail.onEdit }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px;border-radius:10px;background:var(--panel2);border:1px solid var(--border2);color:var(--text);font:600 12px 'IBM Plex Sans';cursor:pointer" style-hover="border-color:var(--accent);color:var(--accent)"><span data-ms="" style="font-size:17px">edit</span>Editar</button>
           <button onClick="{{ empDetail.onToggle }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px;border-radius:10px;background:transparent;border:1px solid {{ empDetail.toggleTone }};color:{{ empDetail.toggleTone }};font:600 12px 'IBM Plex Sans';cursor:pointer"><span data-ms="" style="font-size:17px">{{ empDetail.toggleIcon }}</span>{{ empDetail.toggleLabel }}</button>
         </div>
-        <button onClick="{{ empDetail.onEnter }}" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">login</span>Entrar a administrar</button>
+        <button onClick="{{ empDetail.onEnter }}" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">login</span>Entrar a administrar</button>
       </div>
     </div>
   </sc-if>
@@ -2288,7 +2288,7 @@ a:hover{text-decoration:underline}
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
         <button onClick="{{ onEmpCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onEmpSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Guardar empresa</button>
+        <button onClick="{{ onEmpSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Guardar empresa</button>
       </div>
     </div>
   </sc-if>
@@ -2329,7 +2329,7 @@ a:hover{text-decoration:underline}
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
         <button onClick="{{ onAICancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onAISave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Agregar</button>
+        <button onClick="{{ onAISave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Agregar</button>
       </div>
     </div>
   </sc-if>
@@ -2373,7 +2373,7 @@ a:hover{text-decoration:underline}
       </div>
       <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
         <button onClick="{{ onAGCancel }}" style="padding:10px 18px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text2);font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="color:var(--text)">Cancelar</button>
-        <button onClick="{{ onAGSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Agregar guardia</button>
+        <button onClick="{{ onAGSave }}" style="display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer" style-hover="filter:brightness(1.08)"><span data-ms="" style="font-size:18px">check</span>Agregar guardia</button>
       </div>
     </div>
   </sc-if>
@@ -3290,7 +3290,7 @@ class Component extends DCLogic {
       nrCanSave: !!(s.nr.name.trim() && (s.nr.pts||[]).length),
       nrCantSave: !(s.nr.name.trim() && (s.nr.pts||[]).length),
       nrSaveStyle: (s.nr.name.trim() && (s.nr.pts||[]).length)
-        ? "display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer"
+        ? "display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#08260a;font:600 12.5px 'IBM Plex Sans';cursor:pointer"
         : "display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text3);font:600 12.5px 'IBM Plex Sans';cursor:not-allowed;opacity:.7",
       nrSaveHint: !s.nr.name.trim() ? 'Escribe un nombre para la ronda' : (!(s.nr.pts||[]).length ? 'Agrega al menos un punto NFC' : ''),
       onNROpen:()=>this.openNR(), onNRClose:()=>this.closeNR(), onNRSave:()=>this.saveNR(), onNRDelete:()=>this.deleteRoute(),
