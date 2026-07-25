@@ -723,6 +723,7 @@ function mgNota(){
   $('#mgSave').onclick=async()=>{const des=mv('mgDes');if(!des){toast('Escribe una descripción',true);return;}const {error}=await sb.from('bitacora').insert({tipo:$('#mgTipo').value,instalacion_id:mv('mgIns2'),descripcion:des,empresa_id:ME.empresa_id});if(error)toast(error.message,true);else{toast('Novedad registrada');$('#mgDes').value='';}};
 }
 boot();
+</script>
 <script>
 window.__CIDR = null;
 window.ciDR = function(r, col, alt){
@@ -777,7 +778,6 @@ window.ciDR = function(r, col, alt){
   function boot(){ var m=document.getElementById("main"); if(m){ mo.observe(m,{childList:true,subtree:true}); buildBar(); } else setTimeout(boot,300); }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
 })();
-</script>
 </script>
 </body>
 </html>
