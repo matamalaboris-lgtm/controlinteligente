@@ -514,8 +514,8 @@ async function puntoForm(id){
       if(res.error)throw res.error;toast('Punto guardado');go('puntos');});
 }
 VIEWS.bitacora=function(){
-  renderTable({title:'Bitácora',sub:'Registro de novedades',table:'bitacora',order:{col:'created_at',asc:false},exportable:true,
-    filters:[{v:'nota',l:'Notas'},{v:'novedad',l:'Novedades'},{v:'relevo',l:'Relevos'}],filterFn:(r,f)=>r.tipo===f,
+  renderTable({title:'Bitácora',sub:'Registro de novedades',table:'bitacora',order:{col:'created_at',asc:false},exportable:true,dateCol:'created_at',altDateCol:'created_at',
+    filters:[{v:'nota',l:'Notas'},{v:'novedad',l:'Novedades'},{v:'relevo',l:'Relevos'}],filterFn:(r,f)=>((f==='nota'||f==='novedad'||f==='relevo')?r.tipo===f:true)&&ciDR(r,'created_at','created_at'),
     createLabel:'Nueva entrada',canCreate:()=>true,onCreate:()=>bitForm(),
     cols:[{h:'Fecha',raw:r=>r.created_at,r:r=>fdate(r.created_at)},{h:'Tipo',raw:r=>r.tipo,r:r=>'<span class="tag mut">'+esc(r.tipo||'nota')+'</span>'},{h:'Instalación',raw:r=>instName(r.instalacion_id),r:r=>esc(instName(r.instalacion_id))},{h:'Descripción',k:'descripcion',raw:r=>r.descripcion}]
   });
@@ -529,8 +529,8 @@ async function bitForm(){
       const res=await sb.from('bitacora').insert(body);if(res.error)throw res.error;toast('Entrada registrada');go('bitacora');});
 }
 VIEWS.visitantes=function(){
-  renderTable({title:'Visitantes',sub:'Control de acceso peatonal',table:'visitantes',order:{col:'created_at',asc:false},exportable:true,
-    filters:[{v:'dentro',l:'Dentro'},{v:'fuera',l:'Ya salieron'}],filterFn:(r,f)=>f==='dentro'?!r.salida:!!r.salida,
+  renderTable({title:'Visitantes',sub:'Control de acceso peatonal',table:'visitantes',order:{col:'created_at',asc:false},exportable:true,dateCol:'ingreso',altDateCol:'created_at',
+    filters:[{v:'dentro',l:'Dentro'},{v:'fuera',l:'Ya salieron'}],filterFn:(r,f)=>((f==='dentro')?!r.salida:(f==='fuera')?!!r.salida:true)&&ciDR(r,'ingreso','created_at'),
     createLabel:'Registrar visita',canCreate:()=>true,onCreate:()=>visForm(),
     cols:[{h:'Nombre',k:'nombre',raw:r=>r.nombre},{h:'RUT',raw:r=>r.rut,r:r=>esc(r.rut||'—')},{h:'Motivo',raw:r=>r.motivo,r:r=>esc(r.motivo||'—')},{h:'Instalación',raw:r=>instName(r.instalacion_id),r:r=>esc(instName(r.instalacion_id))},{h:'Ingreso',raw:r=>r.ingreso,r:r=>fdate(r.ingreso)},{h:'Salida',raw:r=>r.salida,r:r=>r.salida?fdate(r.salida):'<span class="tag warn">Dentro</span>'}],
     actions:r=>!r.salida?'<button class="btn xs" onclick="salidaVis(\''+r.id+'\')">Marcar salida</button>':''
@@ -544,8 +544,8 @@ async function visForm(){
 }
 async function salidaVis(id){const res=await sb.from('visitantes').update({salida:new Date().toISOString()}).eq('id',id);if(res.error)toast(res.error.message,true);else{toast('Salida registrada');go('visitantes');}}
 VIEWS.vehiculos=function(){
-  renderTable({title:'Vehículos',sub:'Control de acceso vehicular',table:'vehiculos',order:{col:'created_at',asc:false},exportable:true,
-    filters:[{v:'dentro',l:'Dentro'},{v:'fuera',l:'Ya salieron'}],filterFn:(r,f)=>f==='dentro'?!r.salida:!!r.salida,
+  renderTable({title:'Vehículos',sub:'Control de acceso vehicular',table:'vehiculos',order:{col:'created_at',asc:false},exportable:true,dateCol:'ingreso',altDateCol:'created_at',
+    filters:[{v:'dentro',l:'Dentro'},{v:'fuera',l:'Ya salieron'}],filterFn:(r,f)=>((f==='dentro')?!r.salida:(f==='fuera')?!!r.salida:true)&&ciDR(r,'ingreso','created_at'),
     createLabel:'Registrar vehículo',canCreate:()=>true,onCreate:()=>vehForm(),
     cols:[{h:'Patente',raw:r=>r.patente,r:r=>'<b>'+esc(r.patente)+'</b>'},{h:'Vehículo',raw:r=>[r.marca,r.modelo].filter(Boolean).join(' '),r:r=>esc([r.marca,r.modelo].filter(Boolean).join(' ')||'—')},{h:'Conductor',raw:r=>r.conductor,r:r=>esc(r.conductor||'—')},{h:'Instalación',raw:r=>instName(r.instalacion_id),r:r=>esc(instName(r.instalacion_id))},{h:'Ingreso',raw:r=>r.ingreso,r:r=>fdate(r.ingreso)},{h:'Salida',raw:r=>r.salida,r:r=>r.salida?fdate(r.salida):'<span class="tag warn">Dentro</span>'}],
     actions:r=>!r.salida?'<button class="btn xs" onclick="salidaVeh(\''+r.id+'\')">Marcar salida</button>':''
@@ -723,6 +723,61 @@ function mgNota(){
   $('#mgSave').onclick=async()=>{const des=mv('mgDes');if(!des){toast('Escribe una descripción',true);return;}const {error}=await sb.from('bitacora').insert({tipo:$('#mgTipo').value,instalacion_id:mv('mgIns2'),descripcion:des,empresa_id:ME.empresa_id});if(error)toast(error.message,true);else{toast('Novedad registrada');$('#mgDes').value='';}};
 }
 boot();
+<script>
+window.__CIDR = null;
+window.ciDR = function(r, col, alt){
+  var dr = window.__CIDR; if(!dr) return true;
+  var v = r[col] || (alt? r[alt] : null); if(!v) return false;
+  var ms = new Date(v).getTime(); if(isNaN(ms)) return false;
+  return ms >= dr.from && ms <= dr.to;
+};
+(function(){
+  var SECTIONS = {"Visitantes":1,"Veh\u00edculos":1,"Bit\u00e1cora":1};
+  var MAXDAYS = 60;
+  function sod(d){ d=new Date(d); d.setHours(0,0,0,0); return d; }
+  function eod(d){ d=new Date(d); d.setHours(23,59,59,999); return d; }
+  function fin(d){ d=new Date(d); var m=("0"+(d.getMonth()+1)).slice(-2), day=("0"+d.getDate()).slice(-2); return d.getFullYear()+"-"+m+"-"+day; }
+  function trigger(){ var s=document.querySelector(".toolbar select"); if(s) s.dispatchEvent(new Event("change",{bubbles:true})); }
+  function title(){ var h=document.querySelector(".topbar h2"); return h? h.textContent.trim():""; }
+  function buildBar(){
+    var tb=document.querySelector(".toolbar"); if(!tb) return;
+    if(tb.querySelector(".ci-dr")) return;
+    if(!SECTIONS[title()]) return;
+    var minD=new Date(Date.now()-MAXDAYS*86400000);
+    var w=document.createElement("div"); w.className="ci-dr";
+    w.style.cssText="display:flex;gap:6px;align-items:center;flex-wrap:wrap";
+    w.innerHTML="<span style=\"color:var(--muted);font-size:12px\">\ud83d\udcc5</span>"+
+      "<input type=\"date\" class=\"ci-f\" min=\""+fin(minD)+"\" max=\""+fin(new Date())+"\" style=\"width:auto;padding:7px 9px;font-size:12px\">"+
+      "<span style=\"color:var(--muted);font-size:12px\">a</span>"+
+      "<input type=\"date\" class=\"ci-t\" min=\""+fin(minD)+"\" max=\""+fin(new Date())+"\" style=\"width:auto;padding:7px 9px;font-size:12px\">"+
+      "<button class=\"btn xs sec ci-q\" data-d=\"0\">Hoy</button>"+
+      "<button class=\"btn xs sec ci-q\" data-d=\"7\">7d</button>"+
+      "<button class=\"btn xs sec ci-q\" data-d=\"30\">30d</button>"+
+      "<button class=\"btn xs sec ci-q\" data-d=\"60\">60d</button>"+
+      "<button class=\"btn xs sec ci-c\">Todo</button>";
+    tb.appendChild(w);
+    var fi=w.querySelector(".ci-f"), ti=w.querySelector(".ci-t");
+    function apply(){
+      var f=fi.value, tv=ti.value;
+      if(!f && !tv){ window.__CIDR=null; trigger(); return; }
+      var from=f? sod(f):minD; var to=tv? eod(tv):eod(new Date());
+      if(from < sod(minD)) from=sod(minD);
+      window.__CIDR={from:from.getTime(), to:to.getTime()};
+      trigger();
+    }
+    fi.addEventListener("change",apply); ti.addEventListener("change",apply);
+    w.querySelectorAll(".ci-q").forEach(function(b){ b.addEventListener("click",function(){
+      var d=parseInt(b.getAttribute("data-d"),10); var to=new Date();
+      var from=d===0? sod(new Date()):new Date(Date.now()-d*86400000);
+      fi.value=fin(from); ti.value=fin(to); apply();
+    }); });
+    w.querySelector(".ci-c").addEventListener("click",function(){ fi.value=""; ti.value=""; window.__CIDR=null; trigger(); });
+  }
+  var mo=new MutationObserver(function(){ buildBar(); });
+  function boot(){ var m=document.getElementById("main"); if(m){ mo.observe(m,{childList:true,subtree:true}); buildBar(); } else setTimeout(boot,300); }
+  if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
+})();
+</script>
 </script>
 </body>
 </html>
