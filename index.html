@@ -732,7 +732,6 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
   function fmt(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
   function sod(s){var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);d.setHours(0,0,0,0);return d.getTime();}
   function eod(s){var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);d.setHours(23,59,59,999);return d.getTime();}
-  // global row-date filter used by patched filterFns
   window.ciDR = function(r, col, alt){
     var dr = window.__CIDR; if(!dr.from && !dr.to) return true;
     var v = r[col] || (alt?r[alt]:null); if(!v) return false;
@@ -742,9 +741,8 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
     return true;
   };
   function curSection(){
-    var h = document.querySelector('.content h1, .main h1, h1');
-    var txt = h ? h.textContent.trim() : '';
-    for(var k in SECTS){ if(txt.indexOf(k)===0) return k; }
+    var hs = document.querySelectorAll('.main h2, main h2, h2');
+    for(var j=0;j<hs.length;j++){ var txt=hs[j].textContent.trim(); for(var k in SECTS){ if(txt.indexOf(k)===0) return k; } }
     return null;
   }
   function getSel(){ return document.getElementById('tFilter'); }
@@ -758,22 +756,21 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
   }
   function repaint(){ var sel=getSel(); if(sel){ sel.dispatchEvent(new Event('change',{bubbles:true})); } }
   function countVisible(){
-    var tb = document.querySelector('.content table tbody, table tbody');
+    var tb = document.querySelector('.main table tbody, table tbody');
     if(!tb) return 0;
-    var rows = tb.querySelectorAll('tr');
-    var n=0; for(var i=0;i<rows.length;i++){ if(rows[i].querySelectorAll('td').length>1) n++; }
+    var rows = tb.querySelectorAll('tr'); var n=0;
+    for(var i=0;i<rows.length;i++){ if(rows[i].querySelectorAll('td').length>1) n++; }
     return n;
   }
   function updateLabel(){
     var lbl = document.getElementById('ciDRcount'); if(!lbl) return;
-    var n = countVisible();
-    lbl.textContent = 'Mostrando '+n+' de los \u00faltimos 60 d\u00edas';
+    lbl.textContent = 'Mostrando '+countVisible()+' de los \u00faltimos 60 d\u00edas';
   }
-  function setRange(from,to){ window.__CIDR.from=from; window.__CIDR.to=to; syncSel(); repaint(); setTimeout(updateLabel,120); refreshInputs(); }
   function refreshInputs(){
     var f=document.getElementById('ciFrom'), tt=document.getElementById('ciTo');
     if(f) f.value = window.__CIDR.from||''; if(tt) tt.value = window.__CIDR.to||'';
   }
+  function setRange(from,to){ window.__CIDR.from=from; window.__CIDR.to=to; syncSel(); repaint(); setTimeout(function(){ refreshInputs(); updateLabel(); },140); }
   function daysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return fmt(d); }
   function today(){ return fmt(new Date()); }
   function minDate(){ return daysAgo(60); }
@@ -792,7 +789,7 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
       '<button id=\"ci60\" class=\"ciqb\">60d</button>'+
       '<button id=\"ciTodo\" class=\"ciqb\">Todo</button>'+
       '<button id=\"ciExp\" class=\"ciqb\" style=\"border-color:#6cbf3a;color:#6cbf3a\">\u2b07 Exportar rango</button>'+
-      '<span id=\"ciDRcount\" style=\"color:#8a93a6;font-size:11px;margin-left:4px\"></span>';
+      '<span id=\"ciDRcount\" style=\"color:#8a93a6;font-size:11px;margin-left:4px;width:100%\"></span>';
     tb.appendChild(bar);
     if(!document.getElementById('ciqbStyle')){ var st=document.createElement('style'); st.id='ciqbStyle'; st.textContent='.ciqb{background:#1b2230;border:1px solid #232c3d;color:#e7eaf0;border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer}.ciqb:hover{background:#232c3d}'; document.head.appendChild(st); }
     document.getElementById('ciFrom').addEventListener('change',function(e){ setRange(e.target.value||null, window.__CIDR.to); });
@@ -808,9 +805,9 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
   function loop(){
     try{
       var s = curSection();
-      var tb = document.querySelector('.content .toolbar, .toolbar');
+      var tb = document.querySelector('.main .toolbar, .toolbar');
       var existing = document.getElementById('ciDRbar');
-      if(s && tb){ if(!existing){ buildBar(tb); syncSel(); } updateLabel(); }
+      if(s && tb){ if(!existing){ buildBar(tb); syncSel(); } refreshInputs(); updateLabel(); }
       else { if(existing){ existing.remove(); window.__CIDR.from=null; window.__CIDR.to=null; } }
     }catch(e){}
   }
@@ -820,6 +817,8 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
   loop();
 })();
 </script>
+
+
 
 
 </body>
