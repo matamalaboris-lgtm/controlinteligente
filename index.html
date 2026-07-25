@@ -725,71 +725,102 @@ function mgNota(){
 boot();
 </script>
 <script>
-window.__CIDR = null;
-window.ciDR = function(r, col, alt){
-  var dr = window.__CIDR; if(!dr) return true;
-  var v = r[col] || (alt? r[alt] : null); if(!v) return false;
-  var ms = new Date(v).getTime(); if(isNaN(ms)) return false;
-  return ms >= dr.from && ms <= dr.to;
-};
+window.__CIDR = window.__CIDR || {from:null,to:null};
 (function(){
-  var SECTIONS = {"Visitantes":1,"Veh\u00edculos":1,"Bit\u00e1cora":1};
-  var MAXDAYS = 60;
-  function sod(d){ if(typeof d==="string" && /^\d{4}-\d{2}-\d{2}$/.test(d)){ var p=d.split("-"); return new Date(+p[0],+p[1]-1,+p[2],0,0,0,0); } var x=new Date(d); x.setHours(0,0,0,0); return x; }
-  function eod(d){ if(typeof d==="string" && /^\d{4}-\d{2}-\d{2}$/.test(d)){ var p=d.split("-"); return new Date(+p[0],+p[1]-1,+p[2],23,59,59,999); } var x=new Date(d); x.setHours(23,59,59,999); return x; }
-  function fin(d){ d=new Date(d); var m=("0"+(d.getMonth()+1)).slice(-2), day=("0"+d.getDate()).slice(-2); return d.getFullYear()+"-"+m+"-"+day; }
-  function getSel(){ return document.querySelector(".toolbar select"); }
-  function syncSel(){
-    var s=getSel(); if(!s) return;
-    var emptyOpt=null; for(var i=0;i<s.options.length;i++){ if(s.options[i].value===""||s.options[i].value==="__all"){ emptyOpt=s.options[i]; break; } }
-    if(!emptyOpt) return;
-    if(window.__CIDR){ if(s.value===""||s.value==="__all"){ emptyOpt.value="__all"; s.value="__all"; } }
-    else { if(s.value==="__all"){ emptyOpt.value=""; s.value=""; } else { emptyOpt.value=""; } }
+  var SECTS = {'Visitantes':1,'Veh\u00edculos':1,'Bit\u00e1cora':1};
+  function pad(n){return (n<10?'0':'')+n;}
+  function fmt(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  function sod(s){var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);d.setHours(0,0,0,0);return d.getTime();}
+  function eod(s){var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);d.setHours(23,59,59,999);return d.getTime();}
+  // global row-date filter used by patched filterFns
+  window.ciDR = function(r, col, alt){
+    var dr = window.__CIDR; if(!dr.from && !dr.to) return true;
+    var v = r[col] || (alt?r[alt]:null); if(!v) return false;
+    var tm = new Date(v).getTime(); if(isNaN(tm)) return false;
+    if(dr.from && tm < sod(dr.from)) return false;
+    if(dr.to && tm > eod(dr.to)) return false;
+    return true;
+  };
+  function curSection(){
+    var h = document.querySelector('.content h1, .main h1, h1');
+    var txt = h ? h.textContent.trim() : '';
+    for(var k in SECTS){ if(txt.indexOf(k)===0) return k; }
+    return null;
   }
-  function trigger(){ syncSel(); var s=getSel(); if(s) s.dispatchEvent(new Event("change",{bubbles:true})); }
-  function title(){ var h=document.querySelector(".topbar h2"); return h? h.textContent.trim():""; }
-  function buildBar(){
+  function getSel(){ return document.getElementById('tFilter'); }
+  function syncSel(){
+    var sel = getSel(); if(!sel) return;
+    var dr = window.__CIDR; var active = !!(dr.from||dr.to);
+    var empt = null; for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===''||sel.options[i].value==='__all'){ empt=sel.options[i]; break; } }
+    if(!empt) return;
+    if(active){ empt.value='__all'; if(sel.selectedIndex===-1 || sel.value===''||sel.value==='__all'){ empt.selected=true; } }
+    else { empt.value=''; if(sel.value==='__all'){ empt.selected=true; } }
+  }
+  function repaint(){ var sel=getSel(); if(sel){ sel.dispatchEvent(new Event('change',{bubbles:true})); } }
+  function countVisible(){
+    var tb = document.querySelector('.content table tbody, table tbody');
+    if(!tb) return 0;
+    var rows = tb.querySelectorAll('tr');
+    var n=0; for(var i=0;i<rows.length;i++){ if(rows[i].querySelectorAll('td').length>1) n++; }
+    return n;
+  }
+  function updateLabel(){
+    var lbl = document.getElementById('ciDRcount'); if(!lbl) return;
+    var n = countVisible();
+    lbl.textContent = 'Mostrando '+n+' de los \u00faltimos 60 d\u00edas';
+  }
+  function setRange(from,to){ window.__CIDR.from=from; window.__CIDR.to=to; syncSel(); repaint(); setTimeout(updateLabel,120); refreshInputs(); }
+  function refreshInputs(){
+    var f=document.getElementById('ciFrom'), tt=document.getElementById('ciTo');
+    if(f) f.value = window.__CIDR.from||''; if(tt) tt.value = window.__CIDR.to||'';
+  }
+  function daysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return fmt(d); }
+  function today(){ return fmt(new Date()); }
+  function minDate(){ return daysAgo(60); }
+  function buildBar(tb){
+    if(document.getElementById('ciDRbar')) return;
+    var bar=document.createElement('div'); bar.id='ciDRbar';
+    bar.style.cssText='display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-left:auto;font-size:12px;color:#8a93a6;';
+    var cal='\ud83d\udcc5 ';
+    bar.innerHTML = '<span style=\"color:#8a93a6\">'+cal+'Desde</span>'+
+      '<input id=\"ciFrom\" type=\"date\" min=\"'+minDate()+'\" max=\"'+today()+'\" style=\"background:#1b2230;border:1px solid #232c3d;color:#e7eaf0;border-radius:6px;padding:3px 6px;font-size:12px\">'+
+      '<span style=\"color:#8a93a6\">Hasta</span>'+
+      '<input id=\"ciTo\" type=\"date\" min=\"'+minDate()+'\" max=\"'+today()+'\" style=\"background:#1b2230;border:1px solid #232c3d;color:#e7eaf0;border-radius:6px;padding:3px 6px;font-size:12px\">'+
+      '<button id=\"ciHoy\" class=\"ciqb\">Hoy</button>'+
+      '<button id=\"ci7\" class=\"ciqb\">7d</button>'+
+      '<button id=\"ci30\" class=\"ciqb\">30d</button>'+
+      '<button id=\"ci60\" class=\"ciqb\">60d</button>'+
+      '<button id=\"ciTodo\" class=\"ciqb\">Todo</button>'+
+      '<button id=\"ciExp\" class=\"ciqb\" style=\"border-color:#6cbf3a;color:#6cbf3a\">\u2b07 Exportar rango</button>'+
+      '<span id=\"ciDRcount\" style=\"color:#8a93a6;font-size:11px;margin-left:4px\"></span>';
+    tb.appendChild(bar);
+    if(!document.getElementById('ciqbStyle')){ var st=document.createElement('style'); st.id='ciqbStyle'; st.textContent='.ciqb{background:#1b2230;border:1px solid #232c3d;color:#e7eaf0;border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer}.ciqb:hover{background:#232c3d}'; document.head.appendChild(st); }
+    document.getElementById('ciFrom').addEventListener('change',function(e){ setRange(e.target.value||null, window.__CIDR.to); });
+    document.getElementById('ciTo').addEventListener('change',function(e){ setRange(window.__CIDR.from, e.target.value||null); });
+    document.getElementById('ciHoy').addEventListener('click',function(){ setRange(today(),today()); });
+    document.getElementById('ci7').addEventListener('click',function(){ setRange(daysAgo(7),today()); });
+    document.getElementById('ci30').addEventListener('click',function(){ setRange(daysAgo(30),today()); });
+    document.getElementById('ci60').addEventListener('click',function(){ setRange(daysAgo(60),today()); });
+    document.getElementById('ciTodo').addEventListener('click',function(){ setRange(null,null); });
+    document.getElementById('ciExp').addEventListener('click',function(){ if(typeof exportTable==='function'){ try{ exportTable(); }catch(e){} } });
+    refreshInputs();
+  }
+  function loop(){
     try{
-      var tb=document.querySelector(".toolbar"); if(!tb) return;
-      var t2=title(); if(!SECTIONS[t2]){ window.__CIDR=null; return; }
-      if(tb.querySelector(".ci-dr")) return;
-      window.__CIDR=null;
-      var minD=new Date(Date.now()-MAXDAYS*86400000);
-      var w=document.createElement("div"); w.className="ci-dr";
-      w.style.cssText="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-left:auto";
-      w.innerHTML="<span style=\"color:var(--muted);font-size:12px\">\ud83d\udcc5</span>"+
-        "<input type=\"date\" class=\"ci-f\" min=\""+fin(minD)+"\" max=\""+fin(new Date())+"\" style=\"width:auto;padding:7px 9px;font-size:12px\">"+
-        "<span style=\"color:var(--muted);font-size:12px\">a</span>"+
-        "<input type=\"date\" class=\"ci-t\" min=\""+fin(minD)+"\" max=\""+fin(new Date())+"\" style=\"width:auto;padding:7px 9px;font-size:12px\">"+
-        "<button class=\"btn xs sec ci-q\" data-d=\"0\">Hoy</button>"+
-        "<button class=\"btn xs sec ci-q\" data-d=\"7\">7d</button>"+
-        "<button class=\"btn xs sec ci-q\" data-d=\"30\">30d</button>"+
-        "<button class=\"btn xs sec ci-q\" data-d=\"60\">60d</button>"+
-        "<button class=\"btn xs sec ci-c\">Todo</button>";
-      tb.appendChild(w);
-      var fi=w.querySelector(".ci-f"), ti=w.querySelector(".ci-t");
-      function apply(){
-        var f=fi.value, tv=ti.value;
-        if(!f && !tv){ window.__CIDR=null; trigger(); return; }
-        var from=f? sod(f):sod(minD); var to=tv? eod(tv):eod(new Date());
-        if(from < sod(minD)) from=sod(minD);
-        window.__CIDR={from:from.getTime(), to:to.getTime()};
-        trigger();
-      }
-      fi.addEventListener("change",apply); ti.addEventListener("change",apply);
-      w.querySelectorAll(".ci-q").forEach(function(b){ b.addEventListener("click",function(){
-        var d=parseInt(b.getAttribute("data-d"),10);
-        var from=d===0? new Date():new Date(Date.now()-d*86400000);
-        fi.value=fin(from); ti.value=fin(new Date()); apply();
-      }); });
-      w.querySelector(".ci-c").addEventListener("click",function(){ fi.value=""; ti.value=""; window.__CIDR=null; trigger(); });
+      var s = curSection();
+      var tb = document.querySelector('.content .toolbar, .toolbar');
+      var existing = document.getElementById('ciDRbar');
+      if(s && tb){ if(!existing){ buildBar(tb); syncSel(); } updateLabel(); }
+      else { if(existing){ existing.remove(); window.__CIDR.from=null; window.__CIDR.to=null; } }
     }catch(e){}
   }
-  function loop(){ buildBar(); }
-  var mo=new MutationObserver(loop);
-  function boot(){ var m=document.getElementById("main"); if(m){ mo.observe(m,{childList:true,subtree:true}); } setInterval(loop,600); loop(); }
-  if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
+  var mo = new MutationObserver(function(){ loop(); });
+  mo.observe(document.body,{childList:true,subtree:true});
+  setInterval(loop,600);
+  loop();
 })();
 </script>
+
+
 </body>
 </html>
