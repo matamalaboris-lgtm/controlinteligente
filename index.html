@@ -727,7 +727,9 @@ boot();
 <script>
 window.__CIDR = window.__CIDR || {from:null,to:null};
 (function(){
+  if(window.__CIDR_INIT) return; window.__CIDR_INIT=true;
   var SECTS = {'Visitantes':1,'Veh\u00edculos':1,'Bit\u00e1cora':1};
+  var busy=false;
   function pad(n){return (n<10?'0':'')+n;}
   function fmt(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
   function sod(s){var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);d.setHours(0,0,0,0);return d.getTime();}
@@ -751,8 +753,8 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
     var dr = window.__CIDR; var active = !!(dr.from||dr.to);
     var empt = null; for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===''||sel.options[i].value==='__all'){ empt=sel.options[i]; break; } }
     if(!empt) return;
-    if(active){ empt.value='__all'; if(sel.selectedIndex===-1 || sel.value===''||sel.value==='__all'){ empt.selected=true; } }
-    else { empt.value=''; if(sel.value==='__all'){ empt.selected=true; } }
+    if(active){ if(empt.value!=='__all'){ empt.value='__all'; } if(sel.selectedIndex===-1 || sel.value===''||sel.value==='__all'){ empt.selected=true; } }
+    else { if(empt.value!==''){ empt.value=''; } if(sel.value==='__all'){ empt.selected=true; } }
   }
   function repaint(){ var sel=getSel(); if(sel){ sel.dispatchEvent(new Event('change',{bubbles:true})); } }
   function countVisible(){
@@ -764,13 +766,15 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
   }
   function updateLabel(){
     var lbl = document.getElementById('ciDRcount'); if(!lbl) return;
-    lbl.textContent = 'Mostrando '+countVisible()+' de los \u00faltimos 60 d\u00edas';
+    var txt='Mostrando '+countVisible()+' de los \u00faltimos 60 d\u00edas';
+    if(lbl.textContent!==txt) lbl.textContent=txt;
   }
   function refreshInputs(){
     var f=document.getElementById('ciFrom'), tt=document.getElementById('ciTo');
-    if(f) f.value = window.__CIDR.from||''; if(tt) tt.value = window.__CIDR.to||'';
+    var fv=window.__CIDR.from||'', tv=window.__CIDR.to||'';
+    if(f && f.value!==fv) f.value=fv; if(tt && tt.value!==tv) tt.value=tv;
   }
-  function setRange(from,to){ window.__CIDR.from=from; window.__CIDR.to=to; syncSel(); repaint(); setTimeout(function(){ refreshInputs(); updateLabel(); },140); }
+  function setRange(from,to){ window.__CIDR.from=from; window.__CIDR.to=to; syncSel(); repaint(); setTimeout(function(){ guard(function(){ refreshInputs(); updateLabel(); }); },140); }
   function daysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return fmt(d); }
   function today(){ return fmt(new Date()); }
   function minDate(){ return daysAgo(60); }
@@ -802,21 +806,26 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
     document.getElementById('ciExp').addEventListener('click',function(){ if(typeof exportTable==='function'){ try{ exportTable(); }catch(e){} } });
     refreshInputs();
   }
+  var mo;
+  function guard(fn){ busy=true; try{ fn(); }catch(e){} setTimeout(function(){ busy=false; },0); }
   function loop(){
+    if(busy) return;
     try{
       var s = curSection();
       var tb = document.querySelector('.main .toolbar, .toolbar');
       var existing = document.getElementById('ciDRbar');
-      if(s && tb){ if(!existing){ buildBar(tb); syncSel(); } refreshInputs(); updateLabel(); }
-      else { if(existing){ existing.remove(); window.__CIDR.from=null; window.__CIDR.to=null; } }
+      if(s && tb){ guard(function(){ if(!existing){ buildBar(tb); syncSel(); } refreshInputs(); updateLabel(); }); }
+      else { if(existing){ guard(function(){ existing.remove(); }); window.__CIDR.from=null; window.__CIDR.to=null; } }
     }catch(e){}
   }
-  var mo = new MutationObserver(function(){ loop(); });
+  mo = new MutationObserver(function(){ if(busy) return; loop(); });
   mo.observe(document.body,{childList:true,subtree:true});
-  setInterval(loop,600);
+  setInterval(loop,800);
   loop();
 })();
 </script>
+
+
 
 
 
