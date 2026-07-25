@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window.sb = supabase.createClient(
+    'https://jnrkqmazotalwqkcbygh.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpucmtxbWF6b3RhbHdxa2NieWdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3NjYyMjYsImV4cCI6MjEwMDM0MjIyNn0.CprxETe2BBZMZVF9Kjq4Ubh2tpOsdqV9Fbgm3UaYBqM'
+  );
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
@@ -2500,7 +2507,7 @@ class Component extends DCLogic {
   toggleUserMenu(){ this.setState(s=>({ userMenu:!s.userMenu })); }
   userMenuGo(action){ return ()=>{ this.setState({ userMenu:false }); if(action==='theme'){ this.setState(s=>({theme:s.theme==='dark'?'light':'dark'})); } else if(action==='config'){ this.setState({screen:'config'}); } else if(action==='privacidad'){ this.setState({screen:'privacidad'}); } else if(action==='profile'){ this.setState({ profOpen:true, profTab:'datos' }); } else if(action==='logout'){ this.setState({ webAuth:false, userMenu:false, loginUser:'', loginPass:'', loginErr:'' }); } }; }
   setLoginField(k){ return (e)=>{ const v=(e&&e.target)?e.target.value:e; this.setState({ [k]:v, loginErr:'' }); }; }
-  doWebLogin(){ if(!this.state.loginUser.trim()||!this.state.loginPass){ this.setState({ loginErr:'Ingresa usuario y contraseña' }); return; } this.setState({ webAuth:true, loginPass:'', loginErr:'', screen:'dashboard' }); }
+  async doWebLogin(){ if(!this.state.loginUser.trim()||!this.state.loginPass){ this.setState({ loginErr:'Ingresa usuario y contraseña' }); return; } const { data, error } = await window.sb.auth.signInWithPassword({ email:this.state.loginUser.trim(), password:this.state.loginPass }); if(error){ this.setState({ loginErr:'Credenciales invalidas' }); return; } const { data:perfil } = await window.sb.from('profiles').select('rol, empresa_id, nombre').single(); this.setState({ webAuth:true, loginPass:'', loginErr:'', screen:'dashboard', role:(perfil&&perfil.rol)||'guardia', mAcc:perfil }); }
   closeProf(){ this.setState({ profOpen:false, profEdit:false, pwOpen:false }); }
   setProfTab(t){ return ()=>this.setState({ profTab:t }); }
   startProfEdit(){ this.setState(s=>({ profEdit:true, profSaved:false, profForm: s.profForm || {nombre:'Rodrigo Vega Soto', correo:'rodrigo.vega@controlinteligente.cl', tel:'+56 9 8123 4567'} })); }
