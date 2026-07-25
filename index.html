@@ -735,12 +735,10 @@ window.ciDR = function(r, col, alt){
 (function(){
   var SECTIONS = {"Visitantes":1,"Veh\u00edculos":1,"Bit\u00e1cora":1};
   var MAXDAYS = 60;
-  function sod(d){ d=new Date(d); d.setHours(0,0,0,0); return d; }
-  function eod(d){ d=new Date(d); d.setHours(23,59,59,999); return d; }
+  function sod(d){ if(typeof d==="string" && /^\d{4}-\d{2}-\d{2}$/.test(d)){ var p=d.split("-"); return new Date(+p[0],+p[1]-1,+p[2],0,0,0,0); } var x=new Date(d); x.setHours(0,0,0,0); return x; }
+  function eod(d){ if(typeof d==="string" && /^\d{4}-\d{2}-\d{2}$/.test(d)){ var p=d.split("-"); return new Date(+p[0],+p[1]-1,+p[2],23,59,59,999); } var x=new Date(d); x.setHours(23,59,59,999); return x; }
   function fin(d){ d=new Date(d); var m=("0"+(d.getMonth()+1)).slice(-2), day=("0"+d.getDate()).slice(-2); return d.getFullYear()+"-"+m+"-"+day; }
   function getSel(){ return document.querySelector(".toolbar select"); }
-  // Asegura que filterFn se ejecute aun con "Todos": si hay rango activo y el select esta en "" (Todos),
-  // renombra esa opcion a "__all" y la selecciona; si no hay rango, restaura "".
   function syncSel(){
     var s=getSel(); if(!s) return;
     var emptyOpt=null; for(var i=0;i<s.options.length;i++){ if(s.options[i].value===""||s.options[i].value==="__all"){ emptyOpt=s.options[i]; break; } }
@@ -773,7 +771,7 @@ window.ciDR = function(r, col, alt){
       function apply(){
         var f=fi.value, tv=ti.value;
         if(!f && !tv){ window.__CIDR=null; trigger(); return; }
-        var from=f? sod(f):minD; var to=tv? eod(tv):eod(new Date());
+        var from=f? sod(f):sod(minD); var to=tv? eod(tv):eod(new Date());
         if(from < sod(minD)) from=sod(minD);
         window.__CIDR={from:from.getTime(), to:to.getTime()};
         trigger();
@@ -781,7 +779,7 @@ window.ciDR = function(r, col, alt){
       fi.addEventListener("change",apply); ti.addEventListener("change",apply);
       w.querySelectorAll(".ci-q").forEach(function(b){ b.addEventListener("click",function(){
         var d=parseInt(b.getAttribute("data-d"),10);
-        var from=d===0? sod(new Date()):new Date(Date.now()-d*86400000);
+        var from=d===0? new Date():new Date(Date.now()-d*86400000);
         fi.value=fin(from); ti.value=fin(new Date()); apply();
       }); });
       w.querySelector(".ci-c").addEventListener("click",function(){ fi.value=""; ti.value=""; window.__CIDR=null; trigger(); });
