@@ -738,7 +738,17 @@ window.ciDR = function(r, col, alt){
   function sod(d){ d=new Date(d); d.setHours(0,0,0,0); return d; }
   function eod(d){ d=new Date(d); d.setHours(23,59,59,999); return d; }
   function fin(d){ d=new Date(d); var m=("0"+(d.getMonth()+1)).slice(-2), day=("0"+d.getDate()).slice(-2); return d.getFullYear()+"-"+m+"-"+day; }
-  function trigger(){ var s=document.querySelector(".toolbar select"); if(s) s.dispatchEvent(new Event("change",{bubbles:true})); }
+  function getSel(){ return document.querySelector(".toolbar select"); }
+  // Asegura que filterFn se ejecute aun con "Todos": si hay rango activo y el select esta en "" (Todos),
+  // renombra esa opcion a "__all" y la selecciona; si no hay rango, restaura "".
+  function syncSel(){
+    var s=getSel(); if(!s) return;
+    var emptyOpt=null; for(var i=0;i<s.options.length;i++){ if(s.options[i].value===""||s.options[i].value==="__all"){ emptyOpt=s.options[i]; break; } }
+    if(!emptyOpt) return;
+    if(window.__CIDR){ if(s.value===""||s.value==="__all"){ emptyOpt.value="__all"; s.value="__all"; } }
+    else { if(s.value==="__all"){ emptyOpt.value=""; s.value=""; } else { emptyOpt.value=""; } }
+  }
+  function trigger(){ syncSel(); var s=getSel(); if(s) s.dispatchEvent(new Event("change",{bubbles:true})); }
   function title(){ var h=document.querySelector(".topbar h2"); return h? h.textContent.trim():""; }
   function buildBar(){
     try{
@@ -748,7 +758,7 @@ window.ciDR = function(r, col, alt){
       window.__CIDR=null;
       var minD=new Date(Date.now()-MAXDAYS*86400000);
       var w=document.createElement("div"); w.className="ci-dr";
-      w.style.cssText="display:flex;gap:6px;align-items:center;flex-wrap:wrap";
+      w.style.cssText="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-left:auto";
       w.innerHTML="<span style=\"color:var(--muted);font-size:12px\">\ud83d\udcc5</span>"+
         "<input type=\"date\" class=\"ci-f\" min=\""+fin(minD)+"\" max=\""+fin(new Date())+"\" style=\"width:auto;padding:7px 9px;font-size:12px\">"+
         "<span style=\"color:var(--muted);font-size:12px\">a</span>"+
