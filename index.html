@@ -171,6 +171,35 @@ const SB_URL='https://jnrkqmazotalwqkcbygh.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpucmtxbWF6b3RhbHdxa2NieWdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3NjYyMjYsImV4cCI6MjEwMDM0MjIyNn0.CprxETe2BBZMZVF9Kjq4Ubh2tpOsdqV9Fbgm3UaYBqM';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 let ME=null, EMP=null, INST_CACHE=[], MOBILE=false;
+window.ciGuardiaId=async function(){
+  try{ if(!ME||!ME.id) return null;
+    var sel=await sb.from('guardias').select('id').eq('profile_id',ME.id).limit(1);
+    if(sel&&sel.data&&sel.data.length) return sel.data[0].id;
+    var ins=await sb.from('guardias').insert({profile_id:ME.id,nombre:(ME.nombre||ME.email||'Guardia'),rut:(ME.rut||null),empresa_id:ME.empresa_id,estado:'activo'}).select('id').single();
+    if(ins&&ins.data) return ins.data.id;
+  }catch(e){}
+  return null;
+};
+window.__ciSyncing=false; window.__ciLastSync=0;
+window.ciSyncGuardias=async function(force){
+  try{ if(!ME) return;
+    if(!(ME.rol==='admin'||ME.rol==='supervisor'||ME.rol==='super_admin')) return;
+    if(window.__ciSyncing) return; var now=Date.now(); if(!force&&now-window.__ciLastSync<8000) return; window.__ciSyncing=true; window.__ciLastSync=now;
+    var profs=await sb.from('profiles').select('id,nombre,rut,email,empresa_id,rol').in('rol',['guardia','supervisor']);
+    if(profs&&profs.data){
+      var gs=await sb.from('guardias').select('id,profile_id');
+      var have={}; if(gs&&gs.data){ gs.data.forEach(function(g){ if(g.profile_id) have[g.profile_id]=1; }); }
+      var toAdd=profs.data.filter(function(p){ return p.empresa_id&&!have[p.id]; });
+      if(toAdd.length){
+        var rows=toAdd.map(function(p){ return {profile_id:p.id,nombre:(p.nombre||p.email||'Guardia'),rut:(p.rut||null),empresa_id:p.empresa_id,estado:'activo'}; });
+        await sb.from('guardias').insert(rows);
+        if(typeof go==='function'){ setTimeout(function(){ try{ go('guardias'); }catch(e){} },300); }
+      }
+    }
+  }catch(e){}
+  window.__ciSyncing=false;
+};
+
 const $=s=>document.querySelector(s);
 const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fdate=d=>d?new Date(d).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
@@ -517,14 +546,14 @@ VIEWS.bitacora=function(){
   renderTable({title:'Bitácora',sub:'Registro de novedades',table:'bitacora',order:{col:'created_at',asc:false},exportable:true,dateCol:'created_at',altDateCol:'created_at',
     filters:[{v:'nota',l:'Notas'},{v:'novedad',l:'Novedades'},{v:'relevo',l:'Relevos'}],filterFn:(r,f)=>((f==='nota'||f==='novedad'||f==='relevo')?r.tipo===f:true)&&ciDR(r,'created_at','created_at'),
     createLabel:'Nueva entrada',canCreate:()=>true,onCreate:()=>bitForm(),
-    cols:[{h:'Fecha',raw:r=>r.created_at,r:r=>fdate(r.created_at)},{h:'Tipo',raw:r=>r.tipo,r:r=>'<span class="tag mut">'+esc(r.tipo||'nota')+'</span>'},{h:'Instalación',raw:r=>instName(r.instalacion_id),r:r=>esc(instName(r.instalacion_id))},{h:'Descripción',k:'descripcion',raw:r=>r.descripcion}]
+    cols:[{h:'Fecha',raw:r=>r.created_at,r:r=>fdate(r.created_at)},{h:'Tipo',raw:r=>r.tipo,r:r=>'<span class="tag mut">'+esc(r.tipo||'nota')+'</span>'},{h:'Instalación',raw:r=>instName(r.instalacion_id),r:r=>esc(instName(r.instalacion_id))},{h:'Descripción',k:'descripcion',raw:r=>r.descripcion},{h:'Guardia',raw:r=>r.reportado_por||'',r:r=>esc(r.reportado_por||'\u2014')}]
   });
 };
 async function bitForm(){
   openModal('Entrada de bitácora','<label>Tipo</label><select id="f_tip"><option value="nota">Nota</option><option value="novedad">Novedad</option><option value="relevo">Relevo de turno</option></select>'+
     '<label>Instalación</label><select id="f_ins">'+instOptions()+'</select>'+
     '<label>Descripción</label><textarea id="f_des" rows="3"></textarea>',
-    async()=>{const body={tipo:document.getElementById('f_tip').value,instalacion_id:mv('f_ins'),descripcion:mv('f_des'),empresa_id:ME.empresa_id,guardia_id:null};
+    async()=>{const body={tipo:document.getElementById('f_tip').value,instalacion_id:mv('f_ins'),descripcion:mv('f_des'),empresa_id:ME.empresa_id,guardia_id:await ciGuardiaId(),reportado_por:(ME.nombre||ME.email||'')};
       if(!body.descripcion)throw new Error('Falta la descripción');
       const res=await sb.from('bitacora').insert(body);if(res.error)throw res.error;toast('Entrada registrada');go('bitacora');});
 }
@@ -742,6 +771,12 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
     if(dr.to && tm > eod(dr.to)) return false;
     return true;
   };
+  function detectGuardias(){
+    var hs=document.querySelectorAll('.main h2, main h2, h2');
+    for(var i=0;i<hs.length;i++){ if(hs[i].textContent.trim().indexOf('Guardias')===0) return true; }
+    return false;
+  }
+  var lastSection=null;
   function curSection(){
     var hs = document.querySelectorAll('.main h2, main h2, h2');
     for(var j=0;j<hs.length;j++){ var txt=hs[j].textContent.trim(); for(var k in SECTS){ if(txt.indexOf(k)===0) return k; } }
@@ -816,6 +851,9 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
       var existing = document.getElementById('ciDRbar');
       if(s && tb){ guard(function(){ if(!existing){ buildBar(tb); syncSel(); } refreshInputs(); updateLabel(); }); }
       else { if(existing){ guard(function(){ existing.remove(); }); window.__CIDR.from=null; window.__CIDR.to=null; } }
+      var g = detectGuardias();
+      if(g && lastSection!=='guardias'){ lastSection='guardias'; if(window.ciSyncGuardias) window.ciSyncGuardias(false); }
+      else if(!g && lastSection==='guardias'){ lastSection=null; }
     }catch(e){}
   }
   mo = new MutationObserver(function(){ if(busy) return; loop(); });
@@ -824,6 +862,8 @@ window.__CIDR = window.__CIDR || {from:null,to:null};
   loop();
 })();
 </script>
+
+
 
 
 
