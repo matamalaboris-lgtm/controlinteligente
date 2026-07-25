@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Control Inteligente</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -90,7 +90,7 @@ tbody tr:hover td{background:var(--panel2)}
 .chk.done{opacity:.6}.chk.done .txt{text-decoration:line-through}
 .chk .box{width:20px;height:20px;border-radius:5px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .chk.done .box{background:var(--accent);border-color:var(--accent);color:#08120a}
-.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:9px;padding:13px 20px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:100;animation:slideup .25s}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:9px;padding:13px 20px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:100;animation:slideup .25s;max-width:90vw;text-align:center}
 .toast.err{border-left-color:var(--danger)}
 @keyframes slideup{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}
 .sos{position:fixed;bottom:26px;right:26px;background:var(--danger);color:#fff;border:none;width:64px;height:64px;border-radius:50%;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(247,106,106,.5);z-index:40}
@@ -98,7 +98,31 @@ tbody tr:hover td{background:var(--panel2)}
 .pill{display:inline-flex;gap:6px;background:var(--panel2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;align-items:center}
 .detail-grid{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px}
 .detail-grid b{color:var(--muted);font-weight:600}
-@media(max-width:760px){.side{width:100%;height:auto;position:static}.main{margin-left:0}#app{flex-direction:column}.grid2,.grid3{grid-template-columns:1fr}}
+/* NFC scan */
+.nfc-scan{text-align:center;padding:14px;border:1px dashed var(--border);border-radius:11px;margin-bottom:14px}
+.nfc-ring{width:78px;height:78px;border-radius:50%;margin:6px auto 10px;border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:32px}
+.nfc-ring.scanning{animation:pulse 1.3s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(108,191,58,.5)}70%{box-shadow:0 0 0 16px rgba(108,191,58,0)}100%{box-shadow:0 0 0 0 rgba(108,191,58,0)}}
+/* MOBILE GUARD VIEW */
+#mguard{min-height:100vh;background:var(--bg);padding-bottom:90px}
+.mhead{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:10px;z-index:10}
+.mhead .badge{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#4e9427);display:flex;align-items:center;justify-content:center;font-weight:800;color:#08120a;font-size:14px}
+.mhead b{font-size:15px}.mhead small{display:block;color:var(--muted);font-size:11px}
+.mbody{padding:16px}
+.mcard{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px}
+.mbtn{display:block;width:100%;padding:17px;border-radius:12px;border:none;font-size:16px;font-weight:700;margin-top:12px;cursor:pointer}
+.mbtn.pri{background:var(--accent);color:#08120a}
+.mbtn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.mbtn.dng{background:var(--danger);color:#fff}
+.mpt{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:11px;margin-bottom:10px}
+.mpt.done{border-color:var(--accent);background:rgba(108,191,58,.08)}
+.mpt .st{width:30px;height:30px;border-radius:50%;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.mpt.done .st{background:var(--accent);border-color:var(--accent);color:#08120a}
+.mtab{position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--border);display:flex;z-index:20}
+.mtab a{flex:1;text-align:center;padding:11px 4px;color:var(--muted);font-size:11px;cursor:pointer}
+.mtab a.active{color:var(--accent)}
+.mtab a .i{display:block;font-size:20px;margin-bottom:2px}
+@media(max-width:760px){.side{width:100%;height:auto;position:static}.main{margin-left:0;padding:16px}#app{flex-direction:column}.grid2,.grid3{grid-template-columns:1fr}.map{height:340px}table{font-size:12px}th,td{padding:8px 6px}}
 </style>
 </head>
 <body>
@@ -131,16 +155,26 @@ tbody tr:hover td{background:var(--panel2)}
   </main>
   <button class="sos" id="btnSos">SOS</button>
 </div>
+<div id="mguard" class="hidden">
+  <div class="mhead">
+    <div class="badge">CI</div>
+    <div style="flex:1"><b>Control Inteligente</b><small id="mgName">—</small></div>
+    <button class="btn xs sec" id="mgLogout" style="margin:0">Salir</button>
+  </div>
+  <div class="mbody" id="mgView"></div>
+  <nav class="mtab" id="mgTab"></nav>
+</div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
 <script>
 const SB_URL='https://jnrkqmazotalwqkcbygh.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpucmtxbWF6b3RhbHdxa2NieWdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3NjYyMjYsImV4cCI6MjEwMDM0MjIyNn0.CprxETe2BBZMZVF9Kjq4Ubh2tpOsdqV9Fbgm3UaYBqM';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-let ME=null, EMP=null, INST_CACHE=[];
+let ME=null, EMP=null, INST_CACHE=[], MOBILE=false;
 const $=s=>document.querySelector(s);
 const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fdate=d=>d?new Date(d).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+const ftime=d=>d?new Date(d).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}):'—';
 function toast(msg,err){const r=$('#toastRoot');const t=document.createElement('div');t.className='toast'+(err?' err':'');t.textContent=msg;r.appendChild(t);setTimeout(()=>t.remove(),2800);}
 $('#btnLogin').onclick=doLogin;
 $('#pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -150,33 +184,30 @@ async function doLogin(){
   if(error){m.className='msg err';m.textContent='Error: '+error.message;return;}
   await boot();
 }
-$('#btnLogout').onclick=async()=>{await sb.auth.signOut();location.reload();};
+const logout=async()=>{await sb.auth.signOut();location.reload();};
+$('#btnLogout').onclick=logout;$('#mgLogout').onclick=logout;
 async function boot(){
   const {data:{session}}=await sb.auth.getSession();
-  if(!session){$('#login').classList.remove('hidden');$('#app').classList.add('hidden');return;}
+  if(!session){$('#login').classList.remove('hidden');$('#app').classList.add('hidden');$('#mguard').classList.add('hidden');return;}
   const {data:prof,error}=await sb.from('profiles').select('*').eq('id',session.user.id).single();
   if(error||!prof){$('#loginMsg').className='msg err';$('#loginMsg').textContent='No se encontró el perfil.';await sb.auth.signOut();return;}
   ME=prof;
   if(ME.empresa_id){const {data:e}=await sb.from('empresas').select('*').eq('id',ME.empresa_id).single();EMP=e;}
-  $('#login').classList.add('hidden');$('#app').classList.remove('hidden');
+  const {data:ins}=await sb.from('instalaciones').select('*').order('nombre');INST_CACHE=ins||[];
+  $('#login').classList.add('hidden');
+  const smallScreen=window.matchMedia('(max-width:760px)').matches;
+  MOBILE = ME.rol==='guardia' && smallScreen;
+  if(MOBILE){ $('#mguard').classList.remove('hidden'); $('#mgName').textContent=(ME.nombre||ME.email)+' · Guardia'; mgBuildTabs(); mgGo('ronda'); return; }
+  $('#app').classList.remove('hidden');
   $('#uName').textContent=ME.nombre||ME.email;
   $('#uRol').textContent=rolLabel(ME.rol);
   $('#empName').textContent=EMP?EMP.nombre:(ME.rol==='super_admin'?'Todas las empresas':'—');
-  const {data:ins}=await sb.from('instalaciones').select('*').order('nombre');INST_CACHE=ins||[];
   await buildNav();
   go(ME.rol==='guardia'?'rondas':'dashboard');
 }
 const rolLabel=r=>({super_admin:'Super Admin',admin:'Administrador',supervisor:'Supervisor',guardia:'Guardia',cliente:'Cliente'}[r]||r);
-function toCSV(rows,cols){
-  const head=cols.map(c=>'"'+c.h+'"').join(',');
-  const body=rows.map(r=>cols.map(c=>'"'+String(c.v(r)).replace(/"/g,'""')+'"').join(',')).join('\n');
-  return head+'\n'+body;
-}
-function downloadCSV(name,csv){
-  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
-  toast('Descargado: '+name);
-}
+function toCSV(rows,cols){const head=cols.map(c=>'"'+c.h+'"').join(',');const body=rows.map(r=>cols.map(c=>'"'+String(c.v(r)).replace(/"/g,'""')+'"').join(',')).join('\n');return head+'\n'+body;}
+function downloadCSV(name,csv){const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();toast('Descargado: '+name);}
 const MENU=[
   {sep:'Operación'},
   {id:'dashboard',ic:'📊',t:'Panel',roles:['super_admin','admin','supervisor','cliente']},
@@ -266,11 +297,7 @@ function paintTable(){
   h+='</tbody></table>';el.innerHTML=h;
   el.querySelectorAll('th[data-i]').forEach(th=>th.onclick=()=>{const i=+th.dataset.i;TSTATE.asc=TSTATE.sort===i?!TSTATE.asc:true;TSTATE.sort=i;paintTable();});
 }
-function exportTable(){
-  const {cfg,data}=TSTATE;
-  const cols=cfg.cols.map(c=>({h:c.h,v:r=>{const v=c.raw?c.raw(r):(c.k?r[c.k]:'');return v==null?'':v;}}));
-  downloadCSV(cfg.table+'.csv',toCSV(data,cols));
-}
+function exportTable(){const {cfg,data}=TSTATE;const cols=cfg.cols.map(c=>({h:c.h,v:r=>{const v=c.raw?c.raw(r):(c.k?r[c.k]:'');return v==null?'':v;}}));downloadCSV(cfg.table+'.csv',toCSV(data,cols));}
 const prTag=p=>{const m={alta:'danger',media:'warn',baja:'mut'}[p]||'mut';return '<span class="tag '+m+'">'+esc(p||'—')+'</span>';};
 const stTag=s=>{const m={abierto:'danger',en_proceso:'warn',cerrado:'ok',activo:'ok',inactivo:'mut',pendiente:'warn',completada:'ok',en_curso:'warn'}[s]||'mut';return '<span class="tag '+m+'">'+esc((s||'—').replace('_',' '))+'</span>';};
 const VIEWS={};
@@ -308,7 +335,7 @@ VIEWS.mapa=async function(){
   actionBtn('↻',()=>go('mapa'),'sec');
   $('#view').innerHTML='<div class="panel"><h3>Instalaciones monitoreadas <span class="pill">🟢 con guardia · 🟡 sin guardia</span></h3><div class="map" id="map"></div></div>';
   const map=$('#map');
-  if(!INST_CACHE.length){map.innerHTML='<div class="empty" style="padding-top:190px"><span class="big">🗺️</span>Sin instalaciones registradas.</div>';return;}
+  if(!INST_CACHE.length){map.innerHTML='<div class="empty" style="padding-top:150px"><span class="big">🗺️</span>Sin instalaciones registradas.</div>';return;}
   const {data:gu}=await sb.from('guardias').select('id,instalacion_id,estado,nombre');
   INST_CACHE.slice(0,14).forEach((i,idx)=>{
     const x=10+(idx*29%80),y=14+((idx*41)%72);
@@ -357,25 +384,91 @@ VIEWS.rondas=function(){
   renderTable({title:'Rondas',sub:'Recorridos de vigilancia',table:'rondas',order:{col:'created_at',asc:false},exportable:true,
     filters:[{v:'en_curso',l:'En curso'},{v:'completada',l:'Completadas'}],filterFn:(r,f)=>r.estado===f,
     createLabel:'Nueva ronda',canCreate:()=>true,onCreate:()=>rondaForm(),
-    cols:[{h:'Instalación',raw:r=>instName(r.instalacion_id),r:r=>esc(instName(r.instalacion_id))},{h:'Estado',raw:r=>r.estado,r:r=>stTag(r.estado)},{h:'Inicio',raw:r=>r.inicio,r:r=>fdate(r.inicio)},{h:'Fin',raw:r=>r.fin,r:r=>fdate(r.fin)}],
+    cols:[{h:'Instalación',raw:r=>instName(r.instalacion_id),r:r=>esc(instName(r.instalacion_id))},{h:'Estado',raw:r=>r.estado,r:r=>stTag(r.estado)},{h:'Avance',raw:r=>(r.puntos_marcados||[]).length,r:r=>rondaAvance(r)},{h:'Inicio',raw:r=>r.inicio,r:r=>fdate(r.inicio)},{h:'Fin',raw:r=>r.fin,r:r=>fdate(r.fin)}],
     actions:r=>'<button class="btn xs sec" onclick="rondaVer(\''+r.id+'\')">Puntos</button>'+(r.estado!=='completada'?' <button class="btn xs" onclick="cerrarRonda(\''+r.id+'\')">Finalizar</button>':'')
   });
 };
+window.__PTS={};
+function rondaAvance(r){const done=(r.puntos_marcados||[]).length;const tot=(window.__PTS[r.instalacion_id]||[]).length;const pc=tot?Math.round(done/tot*100):0;return '<div style="display:flex;align-items:center;gap:8px"><div class="prog" style="width:60px"><div style="width:'+pc+'%"></div></div><span style="font-size:11px;color:var(--muted)">'+done+'/'+tot+'</span></div>';}
 async function rondaForm(){
   openModal('Iniciar ronda','<label>Instalación</label><select id="f_ins">'+instOptions()+'</select>',
-    async()=>{const body={instalacion_id:mv('f_ins'),estado:'en_curso',inicio:new Date().toISOString(),empresa_id:ME.empresa_id,guardia_id:null};
+    async()=>{const body={instalacion_id:mv('f_ins'),estado:'en_curso',inicio:new Date().toISOString(),empresa_id:ME.empresa_id,guardia_id:null,puntos_marcados:[]};
       const res=await sb.from('rondas').insert(body);if(res.error)throw res.error;toast('Ronda iniciada');go('rondas');});
 }
 async function cerrarRonda(id){const res=await sb.from('rondas').update({estado:'completada',fin:new Date().toISOString()}).eq('id',id);if(res.error)toast(res.error.message,true);else{toast('Ronda finalizada');go('rondas');}}
+let NFC_READER=null, NFC_ABORT=null;
+const nfcSupported=()=>('NDEFReader' in window);
+async function startNFC(onTag){
+  if(!nfcSupported())throw new Error('Este dispositivo/navegador no soporta Web NFC (usa Chrome en Android).');
+  NFC_READER=new NDEFReader();
+  NFC_ABORT=new AbortController();
+  await NFC_READER.scan({signal:NFC_ABORT.signal});
+  NFC_READER.onreading=ev=>{
+    let code=ev.serialNumber||'';
+    for(const rec of ev.message.records){try{if(rec.recordType==='text'){code=new TextDecoder().decode(rec.data);break;}}catch(e){}}
+    onTag((code||'').trim());
+  };
+}
+function stopNFC(){try{if(NFC_ABORT)NFC_ABORT.abort();}catch(e){}NFC_READER=null;NFC_ABORT=null;}
+
+// marca un punto (por id) en la ronda y persiste
+async function marcarPunto(ronda, puntoId){
+  const set=new Set(ronda.puntos_marcados||[]);
+  if(set.has(puntoId))return false;
+  set.add(puntoId);
+  const arr=[...set];
+  const {error}=await sb.from('rondas').update({puntos_marcados:arr}).eq('id',ronda.id);
+  if(error){toast(error.message,true);return false;}
+  ronda.puntos_marcados=arr;return true;
+}
+// busca punto por codigo NFC o serial dentro de la lista
+function findPunto(pts, code){
+  return pts.find(p=>p.codigo && p.codigo.toLowerCase()===code.toLowerCase());
+}
+
 async function rondaVer(id){
   const r=TSTATE.data.find(x=>x.id===id);if(!r)return;
   const {data:pts}=await sb.from('puntos_nfc').select('*').eq('instalacion_id',r.instalacion_id).order('nombre');
-  const list=pts||[];
-  const done=Math.min(list.length, r.estado==='completada'?list.length:Math.floor(list.length/2));
+  const list=pts||[];window.__PTS[r.instalacion_id]=list;
+  const active=r.estado!=='completada';
+  renderRondaModal(r,list,active);
+}
+function renderRondaModal(r,list,active){
+  const marked=new Set(r.puntos_marcados||[]);
+  const done=[...marked].filter(id=>list.some(p=>p.id===id)).length;
+  const pc=list.length?Math.round(done/list.length*100):0;
   let h='<div class="detail-grid" style="margin-bottom:14px"><b>Instalación</b><span>'+esc(instName(r.instalacion_id))+'</span><b>Estado</b><span>'+stTag(r.estado)+'</span><b>Inicio</b><span>'+fdate(r.inicio)+'</span></div>';
-  h+='<div style="margin-bottom:6px;font-size:13px;color:var(--muted)">Progreso de puntos: '+done+'/'+list.length+'</div><div class="prog" style="margin-bottom:14px"><div style="width:'+(list.length?done/list.length*100:0)+'%"></div></div>';
-  h+=list.length?list.map((p,i)=>'<div class="chk'+(i<done?' done':'')+'"><div class="box">'+(i<done?'✓':'')+'</div><div class="txt"><div>'+esc(p.nombre)+'</div><div style="font-size:11px;color:var(--muted)">'+esc(p.ubicacion||p.codigo||'')+'</div></div></div>').join(''):'<div class="empty">Esta instalación no tiene puntos NFC. Regístralos en “Puntos NFC”.</div>';
+  if(active&&list.length){
+    h+='<div class="nfc-scan" id="nfcBox"><div class="nfc-ring" id="nfcRing">📡</div><div id="nfcTxt" style="font-size:13px;color:var(--muted)">'+(nfcSupported()?'Pulsa “Escanear NFC” y acerca el tag al teléfono.':'Este dispositivo no soporta NFC; marca los puntos manualmente.')+'</div>';
+    if(nfcSupported())h+='<button class="btn sm" id="nfcBtn" style="color:#08120a;margin-top:10px">Escanear NFC</button>';
+    h+='</div>';
+  }
+  h+='<div style="margin-bottom:6px;font-size:13px;color:var(--muted)">Progreso: '+done+'/'+list.length+' ('+pc+'%)</div><div class="prog" style="margin-bottom:14px"><div style="width:'+pc+'%"></div></div>';
+  h+=list.length?list.map(p=>{const d=marked.has(p.id);return '<div class="chk'+(d?' done':'')+'" '+(active&&!d?'onclick="ptTap(\''+r.id+'\',\''+p.id+'\')"':'')+'><div class="box">'+(d?'✓':'')+'</div><div class="txt"><div>'+esc(p.nombre)+'</div><div style="font-size:11px;color:var(--muted)">'+esc(p.ubicacion||'')+(p.codigo?' · NFC: '+esc(p.codigo):'')+'</div></div></div>';}).join(''):'<div class="empty">Esta instalación no tiene puntos NFC. Regístralos en “Puntos NFC”.</div>';
   openModal('Detalle de ronda',h,null,true);
+  window.__RONDA={r,list,active};
+  const btn=document.getElementById('nfcBtn');
+  if(btn)btn.onclick=()=>toggleScan(r);
+}
+async function toggleScan(r){
+  const ring=document.getElementById('nfcRing'),txt=document.getElementById('nfcTxt'),btn=document.getElementById('nfcBtn');
+  if(NFC_READER){stopNFC();ring.classList.remove('scanning');txt.textContent='Escaneo detenido.';btn.textContent='Escanear NFC';return;}
+  try{
+    await startNFC(async code=>{
+      const {r:rr,list}=window.__RONDA;
+      const p=findPunto(list,code);
+      if(!p){toast('Tag no reconocido: '+code,true);return;}
+      const ok=await marcarPunto(rr,p.id);
+      if(ok){toast('✓ Punto marcado: '+p.nombre);renderRondaModal(rr,list,true);}
+      else toast('Ese punto ya estaba marcado.');
+    });
+    ring.classList.add('scanning');txt.textContent='Escaneando… acerca el tag NFC.';btn.textContent='Detener';
+  }catch(e){toast(e.message,true);}
+}
+async function ptTap(rondaId,puntoId){
+  const {r,list}=window.__RONDA;
+  const ok=await marcarPunto(r,puntoId);
+  if(ok){const p=list.find(x=>x.id===puntoId);toast('✓ '+(p?p.nombre:'Punto')+' marcado');renderRondaModal(r,list,true);}
 }
 function parseItems(raw){try{const p=JSON.parse(raw||'[]');if(Array.isArray(p))return p.map(x=>typeof x==='string'?{t:x,d:false}:x);}catch(e){}return (raw?String(raw).split(',').map(s=>({t:s.trim(),d:false})):[]);}
 VIEWS.checklists=function(){
@@ -395,20 +488,12 @@ async function checkForm(){
       if(!body.titulo)throw new Error('Falta el título');
       const res=await sb.from('checklists').insert(body);if(res.error)throw res.error;toast('Checklist creado');go('checklists');});
 }
-async function checkVer(id){
-  const r=TSTATE.data.find(x=>x.id===id);if(!r)return;
-  window.__CK={id,items:parseItems(r.items)};
-  renderCheckModal(r.titulo);
-}
+async function checkVer(id){const r=TSTATE.data.find(x=>x.id===id);if(!r)return;window.__CK={id,items:parseItems(r.items)};renderCheckModal(r.titulo);}
 function renderCheckModal(titulo){
   const it=window.__CK.items;const done=it.filter(x=>x.d).length;const pc=it.length?Math.round(done/it.length*100):0;
   let h='<div style="margin-bottom:6px;font-size:13px;color:var(--muted)">'+done+'/'+it.length+' completados</div><div class="prog" style="margin-bottom:16px"><div style="width:'+pc+'%"></div></div>';
   h+=it.map((x,i)=>'<div class="chk'+(x.d?' done':'')+'" onclick="ckToggle('+i+')"><div class="box">'+(x.d?'✓':'')+'</div><div class="txt">'+esc(x.t)+'</div></div>').join('');
-  openModal(titulo,h,async()=>{
-    const estado=it.every(x=>x.d)&&it.length?'completada':'pendiente';
-    const res=await sb.from('checklists').update({items:JSON.stringify(it),estado}).eq('id',window.__CK.id);
-    if(res.error)throw res.error;toast('Checklist guardado');go('checklists');
-  },true);
+  openModal(titulo,h,async()=>{const estado=it.every(x=>x.d)&&it.length?'completada':'pendiente';const res=await sb.from('checklists').update({items:JSON.stringify(it),estado}).eq('id',window.__CK.id);if(res.error)throw res.error;toast('Checklist guardado');go('checklists');},true);
   document.querySelector('#mSave').textContent='Guardar avance';
 }
 function ckToggle(i){window.__CK.items[i].d=!window.__CK.items[i].d;const cur=document.querySelector('.modal h3').textContent;renderCheckModal(cur);}
@@ -422,7 +507,7 @@ VIEWS.puntos=function(){
 async function puntoForm(id){
   let rec={nombre:'',codigo:'',ubicacion:'',instalacion_id:''};
   if(id){const {data}=await sb.from('puntos_nfc').select('*').eq('id',id).single();if(data)rec=data;}
-  openModal(id?'Editar punto':'Nuevo punto NFC','<label>Nombre</label><input id="f_nom" value="'+esc(rec.nombre)+'"><div class="row"><div><label>Código NFC</label><input id="f_cod" value="'+esc(rec.codigo||'')+'"></div><div><label>Ubicación</label><input id="f_ubi" value="'+esc(rec.ubicacion||'')+'"></div></div><label>Instalación</label><select id="f_ins">'+instOptions(rec.instalacion_id)+'</select>',
+  openModal(id?'Editar punto':'Nuevo punto NFC','<label>Nombre</label><input id="f_nom" value="'+esc(rec.nombre)+'"><div class="row"><div><label>Código NFC</label><input id="f_cod" value="'+esc(rec.codigo||'')+'" placeholder="serial o texto del tag"></div><div><label>Ubicación</label><input id="f_ubi" value="'+esc(rec.ubicacion||'')+'"></div></div><label>Instalación</label><select id="f_ins">'+instOptions(rec.instalacion_id)+'</select>',
     async()=>{const body={nombre:mv('f_nom'),codigo:mv('f_cod'),ubicacion:mv('f_ubi'),instalacion_id:mv('f_ins'),empresa_id:ME.empresa_id};
       if(!body.nombre)throw new Error('Falta el nombre');
       const res=id?await sb.from('puntos_nfc').update(body).eq('id',id):await sb.from('puntos_nfc').insert(body);
@@ -506,8 +591,7 @@ async function userForm(id){
   openModal('Editar usuario','<label>Nombre</label><input id="f_nom" value="'+esc(rec.nombre||'')+'"><label>Email</label><input value="'+esc(rec.email||'')+'" disabled><label>Rol</label><select id="f_rol">'+roles.map(x=>'<option value="'+x+'">'+rolLabel(x)+'</option>').join('')+'</select><label>Estado</label><select id="f_act"><option value="true">Activo</option><option value="false">Inactivo</option></select>',
     async()=>{const body={nombre:mv('f_nom'),rol:document.getElementById('f_rol').value,activo:document.getElementById('f_act').value==='true'};
       const res=await sb.from('profiles').update(body).eq('id',id);if(res.error)throw res.error;toast('Usuario actualizado');go('usuarios');});
-  document.getElementById('f_rol').value=rec.rol;
-  document.getElementById('f_act').value=String(rec.activo);
+  document.getElementById('f_rol').value=rec.rol;document.getElementById('f_act').value=String(rec.activo);
 }
 VIEWS.instalaciones=function(){
   renderTable({title:'Instalaciones',sub:'Sitios bajo vigilancia',table:'instalaciones',order:{col:'nombre'},exportable:true,
@@ -541,8 +625,7 @@ async function empForm(id){
       if(!body.nombre)throw new Error('Falta el nombre');
       const res=id?await sb.from('empresas').update(body).eq('id',id):await sb.from('empresas').insert(body);
       if(res.error)throw res.error;toast('Empresa guardada');go('empresas');});
-  document.getElementById('f_pla').value=rec.plan||'Basico';
-  document.getElementById('f_est').value=rec.estado||'activo';
+  document.getElementById('f_pla').value=rec.plan||'Basico';document.getElementById('f_est').value=rec.estado||'activo';
 }
 VIEWS.reportes=async function(){
   setHead('Reportes','Indicadores del periodo');
@@ -556,12 +639,90 @@ VIEWS.reportes=async function(){
   const pr={alta:0,media:0,baja:0};I.forEach(i=>{if(pr[i.prioridad]!=null)pr[i.prioridad]++;});bar(pr,'#rb');
   const es={abierto:0,en_proceso:0,cerrado:0};I.forEach(i=>{if(es[i.estado]!=null)es[i.estado]++;});bar(es,'#rb2');
 };
-$('#btnSos').onclick=async()=>{
+$('#btnSos').onclick=doSos;
+async function doSos(){
   if(!confirm('¿Enviar alerta SOS? Se registrará un incidente de prioridad alta.'))return;
   const {error}=await sb.from('incidentes').insert({titulo:'🚨 ALERTA SOS',prioridad:'alta',estado:'abierto',empresa_id:ME.empresa_id,reportado_por:ME.id});
-  if(error)toast('Error: '+error.message,true);else{toast('🚨 Alerta SOS enviada');await refreshBadges();}
-};
+  if(error)toast('Error: '+error.message,true);else{toast('🚨 Alerta SOS enviada');if(!MOBILE)await refreshBadges();}
+}
+// ===== VISTA MÓVIL GUARDIA =====
+const MGTABS=[{id:'ronda',ic:'🚶',t:'Ronda'},{id:'checklist',ic:'✅',t:'Checklist'},{id:'nota',ic:'📓',t:'Novedad'},{id:'sos',ic:'🚨',t:'SOS'}];
+function mgBuildTabs(){
+  const t=$('#mgTab');t.innerHTML='';
+  MGTABS.forEach(x=>{const a=document.createElement('a');a.dataset.id=x.id;a.innerHTML='<span class="i">'+x.ic+'</span>'+x.t;a.onclick=()=>mgGo(x.id);t.appendChild(a);});
+}
+function mgGo(id){
+  if(id==='sos'){doSos();return;}
+  document.querySelectorAll('.mtab a').forEach(a=>a.classList.toggle('active',a.dataset.id===id));
+  ({ronda:mgRonda,checklist:mgChecklist,nota:mgNota}[id]||mgRonda)();
+}
+async function mgRonda(){
+  const v=$('#mgView');v.innerHTML='<div class="mcard">Cargando ronda…</div>';
+  let {data:act}=await sb.from('rondas').select('*').eq('estado','en_curso').order('inicio',{ascending:false}).limit(1);
+  let ronda=act&&act[0];
+  if(!ronda){
+    v.innerHTML='<div class="mcard" style="text-align:center"><div style="font-size:40px">🚶</div><h3 style="margin:8px 0">Sin ronda activa</h3><p style="color:var(--muted);font-size:14px">Inicia una ronda para comenzar a marcar puntos.</p><label style="text-align:left">Instalación</label><select id="mgIns">'+instOptions()+'</select><button class="mbtn pri" id="mgStart">Iniciar ronda</button></div>';
+    $('#mgStart').onclick=async()=>{const iid=mv('mgIns');const {error}=await sb.from('rondas').insert({instalacion_id:iid,estado:'en_curso',inicio:new Date().toISOString(),empresa_id:ME.empresa_id,puntos_marcados:[]});if(error)toast(error.message,true);else{toast('Ronda iniciada');mgRonda();}};
+    return;
+  }
+  const {data:pts}=await sb.from('puntos_nfc').select('*').eq('instalacion_id',ronda.instalacion_id).order('nombre');
+  const list=pts||[];window.__RONDA={r:ronda,list,active:true};
+  mgPaintRonda();
+}
+function mgPaintRonda(){
+  const {r,list}=window.__RONDA;const marked=new Set(r.puntos_marcados||[]);
+  const done=[...marked].filter(id=>list.some(p=>p.id===id)).length;const pc=list.length?Math.round(done/list.length*100):0;
+  let h='<div class="mcard"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:16px">'+esc(instName(r.instalacion_id))+'</b><div style="color:var(--muted);font-size:12px">Inicio '+ftime(r.inicio)+'</div></div>'+stTag(r.estado)+'</div>';
+  h+='<div style="margin:14px 0 6px;font-size:13px;color:var(--muted)">Progreso '+done+'/'+list.length+' ('+pc+'%)</div><div class="prog"><div style="width:'+pc+'%"></div></div>';
+  if(nfcSupported())h+='<button class="mbtn pri" id="mgScan">📡 Escanear punto NFC</button><div id="mgScanTxt" style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px"></div>';
+  else h+='<div style="text-align:center;font-size:12px;color:var(--warn);margin-top:10px">NFC no disponible aquí. Marca los puntos tocándolos.</div>';
+  h+='<button class="mbtn dng" id="mgFin" style="margin-top:10px">Finalizar ronda</button></div>';
+  h+='<div class="mcard"><b>Puntos de control</b><div style="margin-top:12px">';
+  h+=list.length?list.map(p=>{const d=marked.has(p.id);return '<div class="mpt'+(d?' done':'')+'" '+(!d?'onclick="mgTap(\''+p.id+'\')"':'')+'><div class="st">'+(d?'✓':'○')+'</div><div style="flex:1"><b>'+esc(p.nombre)+'</b><div style="font-size:12px;color:var(--muted)">'+esc(p.ubicacion||'')+(p.codigo?' · '+esc(p.codigo):'')+'</div></div></div>';}).join(''):'<div class="empty">Esta instalación no tiene puntos NFC configurados.</div>';
+  h+='</div></div>';
+  $('#mgView').innerHTML=h;
+  const fin=$('#mgFin');if(fin)fin.onclick=async()=>{if(!confirm('¿Finalizar la ronda?'))return;await sb.from('rondas').update({estado:'completada',fin:new Date().toISOString()}).eq('id',r.id);toast('Ronda finalizada');mgRonda();};
+  const sc=$('#mgScan');if(sc)sc.onclick=mgToggleScan;
+}
+async function mgTap(pid){const {r,list}=window.__RONDA;const ok=await marcarPunto(r,pid);if(ok){const p=list.find(x=>x.id===pid);toast('✓ '+(p?p.nombre:'Punto')+' marcado');mgPaintRonda();}}
+async function mgToggleScan(){
+  const txt=$('#mgScanTxt'),btn=$('#mgScan');
+  if(NFC_READER){stopNFC();btn.textContent='📡 Escanear punto NFC';btn.classList.remove('sec');btn.classList.add('pri');if(txt)txt.textContent='';return;}
+  try{
+    await startNFC(async code=>{
+      const {r,list}=window.__RONDA;const p=findPunto(list,code);
+      if(!p){toast('Tag no reconocido: '+code,true);return;}
+      const ok=await marcarPunto(r,p.id);
+      if(ok){toast('✓ '+p.nombre);mgPaintRonda();} else toast('Ya estaba marcado.');
+    });
+    btn.textContent='⏹ Detener escaneo';btn.classList.remove('pri');btn.classList.add('sec');if(txt)txt.textContent='Acerca el teléfono al tag NFC…';
+  }catch(e){toast(e.message,true);}
+}
+async function mgChecklist(){
+  const v=$('#mgView');v.innerHTML='<div class="mcard">Cargando…</div>';
+  const {data}=await sb.from('checklists').select('*').order('created_at',{ascending:false});
+  const list=data||[];
+  if(!list.length){v.innerHTML='<div class="mcard" style="text-align:center"><div style="font-size:40px">✅</div><p style="color:var(--muted)">No hay checklists asignados.</p></div>';return;}
+  v.innerHTML=list.map(c=>{const it=parseItems(c.items);const done=it.filter(x=>x.d).length;const pc=it.length?Math.round(done/it.length*100):0;return '<div class="mcard" onclick="mgOpenCheck(\''+c.id+'\')"><div style="display:flex;justify-content:space-between"><b>'+esc(c.titulo)+'</b>'+stTag(c.estado)+'</div><div style="color:var(--muted);font-size:12px;margin:6px 0">'+esc(instName(c.instalacion_id))+'</div><div class="prog"><div style="width:'+pc+'%"></div></div><div style="font-size:12px;color:var(--muted);margin-top:4px">'+done+'/'+it.length+' completados</div></div>';}).join('');
+}
+async function mgOpenCheck(id){
+  const {data:c}=await sb.from('checklists').select('*').eq('id',id).single();if(!c)return;
+  window.__CK={id,items:parseItems(c.items),titulo:c.titulo};mgPaintCheck();
+}
+function mgPaintCheck(){
+  const it=window.__CK.items;const done=it.filter(x=>x.d).length;const pc=it.length?Math.round(done/it.length*100):0;
+  let h='<div class="mcard"><button class="btn xs sec" onclick="mgChecklist()" style="margin:0 0 12px">← Volver</button><b style="font-size:16px">'+esc(window.__CK.titulo)+'</b><div class="prog" style="margin:12px 0"><div style="width:'+pc+'%"></div></div><div style="font-size:12px;color:var(--muted)">'+done+'/'+it.length+'</div></div>';
+  h+='<div class="mcard">'+it.map((x,i)=>'<div class="mpt'+(x.d?' done':'')+'" onclick="mgCkToggle('+i+')"><div class="st">'+(x.d?'✓':'○')+'</div><div style="flex:1">'+esc(x.t)+'</div></div>').join('');
+  h+='<button class="mbtn pri" id="mgCkSave">Guardar avance</button></div>';
+  $('#mgView').innerHTML=h;
+  $('#mgCkSave').onclick=async()=>{const estado=it.every(x=>x.d)&&it.length?'completada':'pendiente';const {error}=await sb.from('checklists').update({items:JSON.stringify(it),estado}).eq('id',window.__CK.id);if(error)toast(error.message,true);else{toast('Checklist guardado');mgChecklist();}};
+}
+function mgCkToggle(i){window.__CK.items[i].d=!window.__CK.items[i].d;mgPaintCheck();}
+function mgNota(){
+  $('#mgView').innerHTML='<div class="mcard"><b style="font-size:16px">Registrar novedad</b><label>Tipo</label><select id="mgTipo"><option value="nota">Nota</option><option value="novedad">Novedad</option><option value="relevo">Relevo de turno</option></select><label>Instalación</label><select id="mgIns2">'+instOptions()+'</select><label>Descripción</label><textarea id="mgDes" rows="4"></textarea><button class="mbtn pri" id="mgSave">Guardar en bitácora</button></div>';
+  $('#mgSave').onclick=async()=>{const des=mv('mgDes');if(!des){toast('Escribe una descripción',true);return;}const {error}=await sb.from('bitacora').insert({tipo:$('#mgTipo').value,instalacion_id:mv('mgIns2'),descripcion:des,empresa_id:ME.empresa_id});if(error)toast(error.message,true);else{toast('Novedad registrada');$('#mgDes').value='';}};
+}
 boot();
 </script>
 </body>
-  </html>
+</html>
